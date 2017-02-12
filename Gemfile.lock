@@ -161,6 +161,7 @@ DEPENDENCIES
   jbuilder
   jquery-rails
   listen
+  nokogiri
   pg
   puma
   rails
