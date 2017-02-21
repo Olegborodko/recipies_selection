@@ -3,6 +3,7 @@ lock "3.7.2"
 
 set :rvm_ruby_version, "2.3.3@project"
 
+set :branch, "oleg"
 set :application, "project"
 
 set :repo_url, "/home/oleg/git_project"
@@ -15,7 +16,7 @@ append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets"
 set :nginx_config_name, "#{fetch(:application)}"
 set :nginx_server_name, "#{fetch(:application)}"
 
-set :puma_workers, 1
+set :puma_workers, 2
 
 
 # Default branch is :master
