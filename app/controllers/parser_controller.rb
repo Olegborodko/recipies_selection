@@ -42,15 +42,18 @@ class ParserController < ApplicationController
         check_existing_category = IngredientCategory.find_by_title(category)
       end
       ingredients_hash.each do |ingr_name, href|
-        @ingredient_url = Nokogiri::HTML(open(href))
-        @ingredient = check_existing_category.ingredients.create
-        @ingredient.name = ingr_name
-        @ingredient.content = @ingredient_url.css('#stages > p').text
-        @ingredient.calories = @ingredient_url.css('#topContributors > li strong')[0].text
-        @ingredient.protein = @ingredient_url.css('#topContributors > li strong')[1].text
-        @ingredient.fat = @ingredient_url.css('#topContributors > li strong')[2].text
-        @ingredient.carbohydrate = @ingredient_url.css('#topContributors > li strong')[3].text
-        @ingredient.save!
+        check_existing_ingredient = Ingredient.find_by_name(params[:name])
+        if nil.equal?(check_existing_ingredient)
+          @ingredient_url = Nokogiri::HTML(open(href))
+          @ingredient = check_existing_category.ingredients.create
+          @ingredient.name = ingr_name
+          @ingredient.content = @ingredient_url.css('#stages > p').text
+          @ingredient.calories = @ingredient_url.css('#topContributors > li strong')[0].text
+          @ingredient.protein = @ingredient_url.css('#topContributors > li strong')[1].text
+          @ingredient.fat = @ingredient_url.css('#topContributors > li strong')[2].text
+          @ingredient.carbohydrate = @ingredient_url.css('#topContributors > li strong')[3].text
+          @ingredient.save!
+        end
 
       end
 
