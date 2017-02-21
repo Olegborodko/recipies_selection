@@ -4,7 +4,8 @@ class IngredientsController < ApplicationController
   # GET /ingredients
   # GET /ingredients.json
   def index
-    @ingredients = Ingredient.all
+    @ingredients = @ingredient_category.ingredients
+    # @posts = @user.posts.paginate(page: params[:page])
   end
 
   # GET /ingredients/1
@@ -24,7 +25,8 @@ class IngredientsController < ApplicationController
   # POST /ingredients
   # POST /ingredients.json
   def create
-    @ingredient = Ingredient.new(ingredient_params)
+    # @ingredient = Ingredient.new(ingredient_params)
+    set_ingredient
 
     respond_to do |format|
       if @ingredient.save
@@ -40,6 +42,8 @@ class IngredientsController < ApplicationController
   # PATCH/PUT /ingredients/1
   # PATCH/PUT /ingredients/1.json
   def update
+    set_ingredient
+
     respond_to do |format|
       if @ingredient.update(ingredient_params)
         format.html { redirect_to @ingredient, notice: 'Ingredient was successfully updated.' }
@@ -64,11 +68,14 @@ class IngredientsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_ingredient
-      @ingredient = Ingredient.find(params[:id])
+      @ingredient_category = IngredientCategory.find(params[:id])
+      @ingredient = @ingredient_category.ingredient.build(ingredient_params)
+      # @post = current_user.posts.build(post_params)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ingredient_params
-      params.require(:ingredient).permit(:name, :content)
+      params.require(:ingredient).permit(:name, :content, :ingredient_category_id)
+      # params.require(:post).permit(:title, :body, :user_id)
     end
 end

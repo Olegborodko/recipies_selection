@@ -10,6 +10,8 @@ class IngredientCategoriesController < ApplicationController
   # GET /ingredient_categories/1
   # GET /ingredient_categories/1.json
   def show
+    @ingredient_category = IngredientCategory.find(params[:id])
+    @ingredients = @ingredient_category.ingredients
   end
 
   # GET /ingredient_categories/new

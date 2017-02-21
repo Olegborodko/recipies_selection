@@ -1,0 +1,10 @@
+<h3><%= ingredient.name %></h3>
+<div class="jumbotron">
+  <p><%= ingredient.content %></p>
+  <br>
+  <div class="btn btn-danger ">
+    <%= link_to 'Edit', edit_ingredient_category_ingredient_path(@ingredient) %>
+    <%= link_to "delete", @ingredient, method: :delete, data: {confirm: "You sure?"} %>
+    <%= link_to "delete", @ingredient, method: :delete, data: {confirm: "You sure?"} %>
+  </div>
+</div>
