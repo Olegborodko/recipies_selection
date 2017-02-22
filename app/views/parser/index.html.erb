@@ -1,8 +1,10 @@
 
 
 
-<%= @recipies_category_links.class  %>
-
+<%= @recipies_category_links.each do |k, v| %>
+<h3><%= k %></h3>
+<h4><%= v %></h4>
+<% end %>
 
 
 <%= @ingredient_category_links.class  %>
@@ -11,12 +13,7 @@
     <h4><%= v %></h4><hr>
 <% end %>
 
-<%= @ingredients.class  %>
-<%= @ingredients.each do |k, v|  %>
-    <h3><%= k %></h3>
-    <h4><%= v %></h4><hr>
-<% end %>
+
 <br><hr>
-<%= @ingredients %>
 
 

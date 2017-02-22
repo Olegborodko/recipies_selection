@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170217225233) do
+ActiveRecord::Schema.define(version: 20170222125003) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,23 @@ ActiveRecord::Schema.define(version: 20170217225233) do
     t.float    "fat"
     t.float    "carbohydrate"
     t.index ["ingredient_category_id", "created_at"], name: "index_ingredients_on_ingredient_category_id_and_created_at", using: :btree
+  end
+
+  create_table "recipe_categories", force: :cascade do |t|
+    t.string "title"
+  end
+
+  create_table "recipes", force: :cascade do |t|
+    t.string   "name"
+    t.text     "content"
+    t.integer  "recipes_category_id"
+    t.string   "cooking_time"
+    t.string   "ingredients"
+    t.string   "number_of_ingredients"
+    t.integer  "ccal"
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+    t.index ["recipes_category_id"], name: "index_recipes_on_recipes_category_id", using: :btree
   end
 
 end
