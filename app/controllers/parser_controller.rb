@@ -70,12 +70,12 @@ class ParserController < ApplicationController
     @recipes = Hash.new
     @recipes2 = Hash.new
     @recipes_category_links.each do |category_name, href|
-      @recipes_url = Nokogiri::HTML(open(href))
+      @recipes_url = Nokogiri::HTML(open(href.to_s + '/page/' + 1..1000))
       recipes_hash = @recipes_url
-          .css('#postsContainer > div:nth-child(1) > div.alignleft.bigposttxt h5 a.arecipe')
-          .each_with_object({}) do
-        |recipe_name_tag, value|
-        value[recipe_name_tag.text.strip] = recipe_name_tag['href']
+                         .css('div.post > h5:nth-child(2) > a:nth-child(1)')
+                         .each_with_object({}) do
+      |recipe_name_tag, value|
+        value[recipe_name_tag.text.strip] = recipe_name_tag["href"]
       end
       @recipes.merge!(recipes_hash)
       @recipes2[category_name]= recipes_hash
@@ -133,5 +133,10 @@ class ParserController < ApplicationController
       # end
 
   end
+
+  def current_page
+
+  end
+
 end
 
