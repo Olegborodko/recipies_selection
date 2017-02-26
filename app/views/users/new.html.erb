@@ -1,0 +1,18 @@
+<h1>Registration</h1>
+<%= form_for User.new, url: {action: "create"}, html: {class: "user_form"} do |f| %>
+    <div class="form-group">
+      <%= f.text_field :name, class: "form-control", placeholder: "name" %>
+    </div>
+    <div class="form-group">
+      <%= f.email_field :email, class: "form-control", placeholder: "email" %>
+    </div>
+    <div class="form-group">
+      <%= f.text_field :password_digest, class: "form-control", placeholder: "password" %>
+    </div>
+    <div class="form-group">
+      <%= f.text_area :description, class: "form-control", placeholder: "description", size: "60x12" %>
+    </div>
+    <div class="form-group">
+      <%= f.submit "Create User", class: "btn, btn-default" %>
+    </div>
+<% end %>

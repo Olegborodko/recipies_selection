@@ -83,6 +83,8 @@ GEM
     erubis (2.7.0)
     execjs (2.7.0)
     ffi (1.9.17)
+    figaro (1.1.1)
+      thor (~> 0.14)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     i18n (0.8.0)
@@ -203,6 +205,7 @@ DEPENDENCIES
   capistrano-rvm
   capistrano3-puma!
   coffee-rails
+  figaro
   jbuilder
   jquery-rails
   jwt
@@ -224,4 +227,4 @@ RUBY VERSION
    ruby 2.3.3p222
 
 BUNDLED WITH
-   1.14.4
+   1.14.5

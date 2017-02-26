@@ -39,6 +39,7 @@ gem 'bootstrap-generators'
 gem 'bcrypt', :require => 'bcrypt'
 gem 'validates_email_format_of'
 gem 'jwt'
+gem 'figaro'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
