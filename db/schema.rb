@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170222125003) do
+ActiveRecord::Schema.define(version: 20170223205513) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "favorite_recipes", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "recipe_id"
+    t.text     "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["recipe_id"], name: "index_favorite_recipes_on_recipe_id", using: :btree
+    t.index ["user_id"], name: "index_favorite_recipes_on_user_id", using: :btree
+  end
 
   create_table "ingredient_categories", force: :cascade do |t|
     t.string   "title"
@@ -49,6 +59,27 @@ ActiveRecord::Schema.define(version: 20170222125003) do
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
     t.index ["recipes_category_id"], name: "index_recipes_on_recipes_category_id", using: :btree
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.string   "title",      null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["title"], name: "index_roles_on_title", unique: true, using: :btree
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string   "email",           null: false
+    t.string   "password_digest", null: false
+    t.string   "name",            null: false
+    t.integer  "role_id",         null: false
+    t.text     "description"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.string   "rid"
+    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
+    t.index ["rid"], name: "index_users_on_rid", unique: true, using: :btree
+    t.index ["role_id"], name: "index_users_on_role_id", using: :btree
   end
 
 end

@@ -35,6 +35,10 @@ gem 'jbuilder'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+gem 'bootstrap-generators'
+gem 'bcrypt', :require => 'bcrypt'
+gem 'validates_email_format_of'
+gem 'jwt'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -48,6 +52,13 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen'
+
+  #deploy
+  gem 'capistrano'
+  gem 'capistrano-rails'
+  gem 'capistrano-rvm'
+  gem 'capistrano3-puma', github: "seuros/capistrano-puma"
+
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
