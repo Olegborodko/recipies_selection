@@ -18,7 +18,8 @@ class ParserController < ApplicationController
     @ingredient_category_links = @ingredient_category_url
                                      .css('div#aside.clearfix div.asideBlock ul.rubricator.lastrub li a[href]')
                                      .each_with_object({}) do
-    |n, h| h[n.text.strip] = n["href"]
+    |n, h|
+      h[n.text.strip] = n["href"]
     end
 
     @ingredients = Hash.new
@@ -62,23 +63,29 @@ class ParserController < ApplicationController
     ##########    RECIPES            ##############
 
     @recipes_category_links = @main_page
-        .css('#aside > span > ul:nth-child(3) li a[href]')
-        .each_with_object({}) do
-      |n, h| h[n.text.strip] = n["href"]
+                                  .css('#aside > span > ul:nth-child(3) li a[href]')
+                                  .each_with_object({}) do
+    |n, h|
+      h[n.text.strip] = n["href"]
     end
 
     @recipes = Hash.new
     @recipes2 = Hash.new
+
+    page_number = 0
     @recipes_category_links.each do |category_name, href|
-      @recipes_url = Nokogiri::HTML(open(href.to_s + '/page/' + 1..1000))
-      recipes_hash = @recipes_url
-                         .css('div.post > h5:nth-child(2) > a:nth-child(1)')
-                         .each_with_object({}) do
-      |recipe_name_tag, value|
-        value[recipe_name_tag.text.strip] = recipe_name_tag["href"]
+      until page_number > 1000
+        @recipes_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s))
+        recipes_hash = @recipes_url
+                           .css('div.post > h5:nth-child(2) > a:nth-child(1)')
+                           .each_with_object({}) do
+        |recipe_name_tag, value|
+          value[recipe_name_tag.text.strip] = recipe_name_tag["href"]
+        end
+        @recipes.merge!(recipes_hash)
+        @recipes2[category_name]= recipes_hash
+        page_number += 1
       end
-      @recipes.merge!(recipes_hash)
-      @recipes2[category_name]= recipes_hash
     end
 
     @recipes2.each do |category, recipes_hash|
@@ -105,38 +112,27 @@ class ParserController < ApplicationController
     end
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      # @cuisine_links = @main_page
-      #                .css('#aside > span > ul:nth-child(9) li a[href]')
-      #                .each_with_object({}) do
-      # |n, h| h[n.text.strip] = n["href"]
-      # end
-      #
-      # @cooking_method_links = @main_page
-      #                .css('#aside > span > ul:nth-child(5) li a[href]')
-      #                .each_with_object({}) do
-      # |n, h| h[n.text.strip] = n["href"]
-      # end
+    # @cuisine_links = @main_page
+    #                .css('#aside > span > ul:nth-child(9) li a[href]')
+    #                .each_with_object({}) do
+    # |n, h| h[n.text.strip] = n["href"]
+    # end
+    #
+    # @cooking_method_links = @main_page
+    #                .css('#aside > span > ul:nth-child(5) li a[href]')
+    #                .each_with_object({}) do
+    # |n, h| h[n.text.strip] = n["href"]
+    # end
 
   end
 
-  def current_page
-
-  end
+  # def pages
+  #   @pages = @main_page
+  #                  .css('#aside > span > ul:nth-child(5) li a[href]')
+  #                  .each_with_object({}) do
+  #   |n, h| h[n.text.strip] = n["href"]
+  #   end
+  # end
 
 end
 
