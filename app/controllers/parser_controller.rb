@@ -21,7 +21,7 @@ class ParserController < ApplicationController
     |n, h|
       h[n.text.strip] = n["href"]
     end
-
+  # TODO parsing with pagination
     @ingredients = Hash.new
     @ingredients2 = Hash.new
     @ingredient_category_links.each do |category_name, href|
@@ -72,9 +72,9 @@ class ParserController < ApplicationController
     @recipes = Hash.new
     @recipes2 = Hash.new
 
-    page_number = 0
+    # page_number = 0
     @recipes_category_links.each do |category_name, href|
-      until page_number > 1000
+      for page_number in (0..672).step(24).to_i
         @recipes_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s))
         recipes_hash = @recipes_url
                            .css('div.post > h5:nth-child(2) > a:nth-child(1)')
@@ -83,8 +83,8 @@ class ParserController < ApplicationController
           value[recipe_name_tag.text.strip] = recipe_name_tag["href"]
         end
         @recipes.merge!(recipes_hash)
-        @recipes2[category_name]= recipes_hash
-        page_number += 1
+        @recipes2[category_name] = recipes_hash
+        # page_number += 1
       end
     end
 
