@@ -74,7 +74,7 @@ class ParserController < ApplicationController
 
     # .page_number = 0
     @recipes_category_links.each do |category_name, href|
-      for page_number in (0..672).step(24).to_i
+      # for page_number in (0..672).step(24).to_i
         @recipes_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s))
         recipes_hash = @recipes_url
                            .css('div.post > h5:nth-child(2) > a:nth-child(1)')
