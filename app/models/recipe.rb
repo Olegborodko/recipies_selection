@@ -2,6 +2,6 @@ class Recipe < ApplicationRecord
   belongs_to :recipe_category
   has_many :ingredients
 
-  has_many :favoriterecipes
-  has_many :users, :through => :favoriterecipes
+  has_many :favorite_recipes
+  has_many :users, :through => :favorite_recipes
 end
