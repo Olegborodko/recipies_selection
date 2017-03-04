@@ -1,17 +1,14 @@
 class UsersController < ApplicationController
+  before_action :current_user, only: [:edit, :update, :update_description, :destroy]
+
   def index
   end
-
-  #def mail_autorization
-  #  UserMailer.create.deliver_now
-  #end
 
   def new
   end
 
   def create
     user = User.new(person_params)
-    user.role_id = 1 #unauthorized
 
     if user.save
       UserMailer.create(user.email, user.rid).deliver_now
@@ -38,10 +35,7 @@ class UsersController < ApplicationController
       time_now = Time.now
 
       if user.created_at + ENV['time_for_audentification'].to_i > time_now
-        if user.role_id == 1
-          user.role_id = 2 #subscriber
-          user.save
-        end
+        user.update_attribute(:role_id, 2)
         redirect_to root_url, :notice => "Thank you now you are authorized"
       else
         user.destroy
@@ -53,12 +47,42 @@ class UsersController < ApplicationController
 
   end
 
-  private
-  def person_params
-    params.require(:user).permit(:email, :name, :password_digest, :description)
+  def edit
+
   end
 
-  def token
-    params.permit(:id)
+  def update
+    if @current_user.authenticate(user_change[:old_password])
+      if user_change[:new_password] == user_change[:new_password_confirmation] && user_change[:new_password]!=''
+        if @current_user.update_attribute(:password, user_change[:new_password])
+          redirect_to root_url, :notice => "Your password was changed"
+        else
+          render edit_user_url(@current_user.id)
+        end
+      else
+        redirect_to edit_user_url(@current_user.id), :notice => "Passwords not correct"
+      end
+    else
+      redirect_to root_url, :notice => "Sorry, there was some error"
+    end
+
   end
+
+  def update_description
+    if @current_user.update_attribute(:description, user_change[:description])
+      redirect_to root_url, :notice => "Your description was changed"
+    else
+      redirect_to root_url, :notice => "Sorry, there was some error"
+    end
+  end
+
+  private
+  def person_params
+    params.require(:user).permit(:email, :name, :password, :password_confirmation, :description)
+  end
+
+  def user_change
+    params.require(:user_change).permit(:description, :old_password, :new_password, :new_password_confirmation)
+  end
+
 end

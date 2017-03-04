@@ -5,13 +5,15 @@ Rails.application.routes.draw do
 
   root 'users#index'
 
-  resources :users
+  resources :users, except: [:show]
   get 'signup', to: 'users#new'
   get 'verification/:id', to: 'users#verification', as: :verification
+  put 'update_description', to: 'users#update_description', as: :update_description
 
   namespace :users do
-    resources :sessions, only: [:new, :create, :destroy]
-    get 'login', to: 'sessions#new'
+    resources :sessions, only: [:create]
+    get 'login', to: 'sessions#new', as: :login
+    get 'logout', to: 'sessions#destroy', as: :logout
   end
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

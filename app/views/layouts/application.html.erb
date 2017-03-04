@@ -33,15 +33,14 @@
         <ul class="nav navbar-nav">
           <li class="active"><a href="#">Home</a></li>
 
-          <% #if !sign_in %>
-              <a class="margin_right_10" href="">Registration</a>
-              <a class="margin_right_10" href="">Sign in</a>
-          <% #else %>
-              <a class="margin_right_10" href="">Add new post</a>
-              <a class="margin_right_10" href="">My Posts</a>
-              <span class="margin_right_10"></span>
+          <% if !current_user %>
+              <li><a class="margin_right_10" href="<%= users_login_url() %>">Sign in</a></li>
+              <li><a class="margin_right_10" href="<%= new_user_url() %>">Registration</a></li>
+          <% else %>
+              <li><a class="margin_right_10" href="<%= edit_user_url(@current_user.id) %>"><%= @current_user.name %></a></li>
+              <li><a class="margin_right_10" href="<%= users_logout_url() %>">Logout</a></li>
               <% #link_to "Exit", {controller: "sessions", action: "destroy" , id: "self"}, method: :delete, class: 'del' %>
-          <% #end %>
+          <% end %>
 
         </ul>
       </div>

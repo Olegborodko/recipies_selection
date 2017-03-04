@@ -1,4 +1,4 @@
-class Users::SessionController < ApplicationController
+class Users::SessionsController < ApplicationController
   def destroy
     session[:user_id] = nil
     redirect_to root_url
@@ -9,12 +9,16 @@ class Users::SessionController < ApplicationController
   end
 
   def create
-    if authentication(params[:email], params[:password])
-      session[:user_id] = user.rid
-      redirect_to root_url
+    if authentication(person_params[:email], person_params[:password])
+      redirect_to root_url, :notice => "You are logged in"
     else
-      flash.now[:error] = "not correct password or email"
+      flash.now[:error] = "Not correct password or email"
       render :new
     end
+  end
+
+  private
+  def person_params
+    params.require(:session).permit(:email, :password)
   end
 end
