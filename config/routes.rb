@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   get 'signup', to: 'users#new'
   get 'verification/:id', to: 'users#verification', as: :verification
   put 'update_description', to: 'users#update_description', as: :update_description
+  get 'restore_password', to: 'users#restore_password', as: :restore_password
+  post 'restore', to: 'users#restore'
 
   namespace :users do
     resources :sessions, only: [:create]

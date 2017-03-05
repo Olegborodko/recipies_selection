@@ -14,4 +14,9 @@ class UserMailer < ApplicationMailer
 
     mail to: user_to, subject: "Registration confirmation"
   end
+
+  def password_new(user_to, password)
+    @password = password
+    mail to: user_to, subject: "Password Restore"
+  end
 end

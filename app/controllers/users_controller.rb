@@ -76,6 +76,27 @@ class UsersController < ApplicationController
     end
   end
 
+  def restore_password
+
+  end
+
+  def restore
+    user = User.find_by email: password[:email].downcase
+    if user
+      if user.name == password[:name]
+
+        o = [('a'..'z'), ('A'..'Z')].map(&:to_a).flatten
+        p_new = (0...20).map { o[rand(o.length)] }.join
+
+        if user.update_attribute(:password, p_new)
+          UserMailer.password_new(user.email, p_new).deliver_now
+        end
+        redirect_to root_url, :notice => "Success, please check your email" and return
+      end
+    end
+    redirect_to root_url, :notice => "Sorry, there was some error"
+  end
+
   private
   def person_params
     params.require(:user).permit(:email, :name, :password, :password_confirmation, :description)
@@ -83,6 +104,10 @@ class UsersController < ApplicationController
 
   def user_change
     params.require(:user_change).permit(:description, :old_password, :new_password, :new_password_confirmation)
+  end
+
+  def password
+    params.require(:password).permit(:name, :email)
   end
 
 end
