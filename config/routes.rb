@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   # resources :ingredients
   # resources :ingredient_categories
 
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/sidekiq'
+
   root 'users#index'
 
   resources :users, except: [:show]
@@ -14,6 +17,7 @@ Rails.application.routes.draw do
 
   namespace :users do
     resources :sessions, only: [:create]
+    get 'sessions', to: 'sessions#new'
     get 'login', to: 'sessions#new', as: :login
     get 'logout', to: 'sessions#destroy', as: :logout
   end

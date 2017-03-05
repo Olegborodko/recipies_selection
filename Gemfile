@@ -41,6 +41,9 @@ gem 'validates_email_format_of'
 gem 'jwt'
 gem 'figaro'
 
+gem 'sidekiq'
+gem 'sinatra', github: 'sinatra/sinatra'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri

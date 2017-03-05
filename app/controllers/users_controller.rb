@@ -89,9 +89,10 @@ class UsersController < ApplicationController
         p_new = (0...20).map { o[rand(o.length)] }.join
 
         if user.update_attribute(:password, p_new)
-          UserMailer.password_new(user.email, p_new).deliver_now
+          EmailSendJob.perform_later(user.email, p_new)
+          #UserMailer.password_new(user.email, p_new).deliver_now
+          redirect_to root_url, :notice => "Success, please check your email" and return
         end
-        redirect_to root_url, :notice => "Success, please check your email" and return
       end
     end
     redirect_to root_url, :notice => "Sorry, there was some error"
