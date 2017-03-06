@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  extend FriendlyId
+  friendly_id :name, use: :slugged
+
   belongs_to :role
   has_many :favorite_recipes
   has_many :recipes, :through => :favorite_recipes

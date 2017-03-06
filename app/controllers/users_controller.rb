@@ -11,7 +11,8 @@ class UsersController < ApplicationController
     user = User.new(person_params)
 
     if user.save
-      UserMailer.create(user.email, user.rid).deliver_now
+      EmailUserCreateJob.perform_later(user.email, user.rid)
+      #UserMailer.create(user.email, user.rid).deliver_now
       redirect_to root_url, :notice => "Please check your email, for continues"
     else
       flash.now[:error] = user.errors.full_messages

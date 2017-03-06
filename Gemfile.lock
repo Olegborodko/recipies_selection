@@ -98,6 +98,8 @@ GEM
     ffi (1.9.17)
     figaro (1.1.1)
       thor (~> 0.14)
+    friendly_id (5.2.0)
+      activerecord (>= 4.0.0)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     i18n (0.8.0)
@@ -226,6 +228,7 @@ DEPENDENCIES
   capistrano3-puma!
   coffee-rails
   figaro
+  friendly_id
   jbuilder
   jquery-rails
   jwt
