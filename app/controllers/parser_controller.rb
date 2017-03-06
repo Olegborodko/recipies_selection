@@ -96,11 +96,17 @@ class ParserController < ApplicationController
           # @recipe.ingredients = @recipe_url.css('#ingresList > li:nth-child(1) > a').text
 
           @recipe_ingr = @recipe_url.css('#ingresList > li > a').each_with_object({}) do |n, h|
-            h[n.text.strip] = n["href"]
+            h[n.text.strip] = n['href']
+
+            ingr = Ingredient.find_by_href(n[:href])
+            unless n[:href] != ingr.href
+              # p '1'
+              @recipe.ingredients.to_a << ingr
+            end
+            @recipe.save!
 
           end
 
-          @recipe.save!
         end
       end
     end
