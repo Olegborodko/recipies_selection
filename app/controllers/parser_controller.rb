@@ -39,6 +39,7 @@ class ParserController < ApplicationController
           @ingredient_url = Nokogiri::HTML(open(href))
           @ingredient = check_existing_category.ingredients.create
           @ingredient.name = ingr_name
+          @ingredient.href = href
           @ingredient.content = @ingredient_url.css('#stages > p').text
           @ingredient.calories = @ingredient_url.css('#topContributors > li strong')[0].text
           @ingredient.protein = @ingredient_url.css('#topContributors > li strong')[1].text
@@ -66,7 +67,7 @@ class ParserController < ApplicationController
       page_number = 0
       @recipes_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s))
       rec_url = @recipes_url.css('div.post > h5:nth-child(2) > a:nth-child(1)')
-      # un rec_url
+      # unless rec_url
         recipes_hash = rec_url.each_with_object({}) do |recipe_name_tag, value|
           value[recipe_name_tag.text.strip] = recipe_name_tag["href"]
           # page_number += 24
@@ -89,10 +90,15 @@ class ParserController < ApplicationController
           @recipe_url = Nokogiri::HTML(open(href))
           @recipe = check_existing_category.recipes.create
           @recipe.name = recipe_name
-          @recipe.content = @recipe_url.css('#stages div.instructions').text
-          @recipe.cooking_time = @recipe_url.css('#stages > p').text   ##stages > p
-          @recipe.ccal = @recipe_url.css('#stages > h2').text
-          # @recipe.ingredients = @recipe_url.css('li.ingredient a[title]').text
+          @recipe.content = @recipe_url.css('#stages div.instructions').text.strip
+          @recipe.cooking_time = @recipe_url.css('#stages > p').text.strip
+          @recipe.ccal = @recipe_url.css('#stages > h2').text.strip
+          # @recipe.ingredients = @recipe_url.css('#ingresList > li:nth-child(1) > a').text
+
+          @recipe_ingr = @recipe_url.css('#ingresList > li > a').each_with_object({}) do |n, h|
+            h[n.text.strip] = n["href"]
+
+          end
 
           @recipe.save!
         end
