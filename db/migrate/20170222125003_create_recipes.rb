@@ -7,7 +7,7 @@ class CreateRecipes < ActiveRecord::Migration[5.0]
       t.string :cooking_time
       t.string :ingredients
       t.string :number_of_ingredients
-      t.integer :ccal
+      t.string :ccal
 
       t.timestamps
     end

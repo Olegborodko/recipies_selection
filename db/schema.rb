@@ -56,21 +56,37 @@ ActiveRecord::Schema.define(version: 20170306201622) do
     t.index ["ingredient_category_id", "created_at"], name: "index_ingredients_on_ingredient_category_id_and_created_at", using: :btree
   end
 
+  create_table "ingredients_recipes", id: false, force: :cascade do |t|
+    t.integer "recipe_id",     null: false
+    t.integer "ingredient_id", null: false
+    t.index ["ingredient_id", "recipe_id"], name: "index_ingredients_recipes_on_ingredient_id_and_recipe_id", using: :btree
+    t.index ["recipe_id", "ingredient_id"], name: "index_ingredients_recipes_on_recipe_id_and_ingredient_id", using: :btree
+  end
+
   create_table "recipe_categories", force: :cascade do |t|
     t.string "title"
+  end
+
+  create_table "recipe_ingredients", force: :cascade do |t|
+    t.integer  "recipe_id"
+    t.integer  "ingredient_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["ingredient_id"], name: "index_recipe_ingredients_on_ingredient_id", using: :btree
+    t.index ["recipe_id"], name: "index_recipe_ingredients_on_recipe_id", using: :btree
   end
 
   create_table "recipes", force: :cascade do |t|
     t.string   "name"
     t.text     "content"
-    t.integer  "recipes_category_id"
+    t.integer  "recipe_category_id"
     t.string   "cooking_time"
     t.string   "ingredients"
     t.string   "number_of_ingredients"
     t.integer  "ccal"
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
-    t.index ["recipes_category_id"], name: "index_recipes_on_recipes_category_id", using: :btree
+    t.index ["recipe_category_id"], name: "index_recipes_on_recipe_category_id", using: :btree
   end
 
   create_table "roles", force: :cascade do |t|

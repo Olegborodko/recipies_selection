@@ -3,6 +3,7 @@ class CreateIngredients < ActiveRecord::Migration[5.0]
     create_table :ingredients do |t|
       t.string :name
       t.text :content
+      t.string :href
       t.integer :ingredient_category_id
 
       t.timestamps

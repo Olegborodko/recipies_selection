@@ -1,13 +1,3 @@
-require 'rubygems'
-require 'nokogiri'
-require 'open-uri'
-
-# MAIN_PAGE = Nokogiri::HTML(open("http://namnamra.com/"))
-# BASE_INGREDIENT_PAGE = Nokogiri::HTML(open("http://namnamra.com/ingredients/page/"))
-# FIRST_PAGE = 0
-# LAST_PAGE = 696
-
-
 class ParserController < ApplicationController
 
   def index
@@ -21,7 +11,7 @@ class ParserController < ApplicationController
     |n, h|
       h[n.text.strip] = n["href"]
     end
-  # TODO parsing with pagination
+    # TODO parsing with pagination
     @ingredients = Hash.new
     @ingredients2 = Hash.new
     @ingredient_category_links.each do |category_name, href|
@@ -49,6 +39,7 @@ class ParserController < ApplicationController
           @ingredient_url = Nokogiri::HTML(open(href))
           @ingredient = check_existing_category.ingredients.create
           @ingredient.name = ingr_name
+          @ingredient.href = href
           @ingredient.content = @ingredient_url.css('#stages > p').text
           @ingredient.calories = @ingredient_url.css('#topContributors > li strong')[0].text
           @ingredient.protein = @ingredient_url.css('#topContributors > li strong')[1].text
@@ -72,20 +63,18 @@ class ParserController < ApplicationController
     @recipes = Hash.new
     @recipes2 = Hash.new
 
-    # page_number = 0
     @recipes_category_links.each do |category_name, href|
-      for page_number in (0..672).step(24).to_i
-        @recipes_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s))
-        recipes_hash = @recipes_url
-                           .css('div.post > h5:nth-child(2) > a:nth-child(1)')
-                           .each_with_object({}) do
-        |recipe_name_tag, value|
+      page_number = 0
+      @recipes_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s))
+      rec_url = @recipes_url.css('div.post > h5:nth-child(2) > a:nth-child(1)')
+      # unless rec_url
+        recipes_hash = rec_url.each_with_object({}) do |recipe_name_tag, value|
           value[recipe_name_tag.text.strip] = recipe_name_tag["href"]
+          # page_number += 24
         end
         @recipes.merge!(recipes_hash)
         @recipes2[category_name] = recipes_hash
-        # page_number += 1
-      end
+      # end
     end
 
     @recipes2.each do |category, recipes_hash|
@@ -101,38 +90,20 @@ class ParserController < ApplicationController
           @recipe_url = Nokogiri::HTML(open(href))
           @recipe = check_existing_category.recipes.create
           @recipe.name = recipe_name
-          @recipe.content = @recipe_url.css('#stages > div.instructions').text
-          @recipe.cooking_time = @recipe_url.css('#stages > p > span > span').text
-          @recipe.ccal = @recipe_url.css('#stages > h2').text
-          @recipe.ingredients = @recipe_url.css('#stages > h2').text
+          @recipe.content = @recipe_url.css('#stages div.instructions').text.strip
+          @recipe.cooking_time = @recipe_url.css('#stages > p').text.strip
+          @recipe.ccal = @recipe_url.css('#stages > h2').text.strip
+          # @recipe.ingredients = @recipe_url.css('#ingresList > li:nth-child(1) > a').text
+
+          @recipe_ingr = @recipe_url.css('#ingresList > li > a').each_with_object({}) do |n, h|
+            h[n.text.strip] = n["href"]
+
+          end
 
           @recipe.save!
         end
       end
     end
-
-
-    # @cuisine_links = @main_page
-    #                .css('#aside > span > ul:nth-child(9) li a[href]')
-    #                .each_with_object({}) do
-    # |n, h| h[n.text.strip] = n["href"]
-    # end
-    #
-    # @cooking_method_links = @main_page
-    #                .css('#aside > span > ul:nth-child(5) li a[href]')
-    #                .each_with_object({}) do
-    # |n, h| h[n.text.strip] = n["href"]
-    # end
-
   end
-
-  # def pages
-  #   @pages = @main_page
-  #                  .css('#aside > span > ul:nth-child(5) li a[href]')
-  #                  .each_with_object({}) do
-  #   |n, h| h[n.text.strip] = n["href"]
-  #   end
-  # end
-
 end
 
