@@ -15,6 +15,10 @@ Rails.application.routes.draw do
   get 'restore_password', to: 'users#restore_password', as: :restore_password
   post 'restore', to: 'users#restore'
 
+  namespace :admin do
+    resources :users 
+  end
+
   namespace :users do
     resources :sessions, only: [:create]
     get 'sessions', to: 'sessions#new'
