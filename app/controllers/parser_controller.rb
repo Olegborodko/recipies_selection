@@ -65,16 +65,28 @@ class ParserController < ApplicationController
 
     @recipes_category_links.each do |category_name, href|
       page_number = 0
-      @recipes_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s))
-      rec_url = @recipes_url.css('div.post > h5:nth-child(2) > a:nth-child(1)')
-      # unless rec_url
+      @recipes2[category_name] = []
+      while page_number < 1000
+        @recipes_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s))
+        rec_url = @recipes_url.css('div.post > h5:nth-child(2) > a:nth-child(1)')
+
         recipes_hash = rec_url.each_with_object({}) do |recipe_name_tag, value|
           value[recipe_name_tag.text.strip] = recipe_name_tag["href"]
-          # page_number += 24
         end
-        @recipes.merge!(recipes_hash)
-        @recipes2[category_name] = recipes_hash
-      # end
+
+        # unless recipes_hash.empty?
+          @recipes.merge!(recipes_hash)
+          # @recipes2.store(category_name, recipes_hash)
+
+          if @recipes2[category_name].empty?
+            @recipes2[category_name] = recipes_hash
+          else
+            @recipes2[category_name].merge!(recipes_hash)
+          end
+          page_number += 24
+        # end
+      end
+
     end
 
     @recipes2.each do |category, recipes_hash|
@@ -95,17 +107,17 @@ class ParserController < ApplicationController
           @recipe.ccal = @recipe_url.css('#stages > h2').text.strip
           # @recipe.ingredients = @recipe_url.css('#ingresList > li:nth-child(1) > a').text
 
-          @recipe_ingr = @recipe_url.css('#ingresList > li > a').each_with_object({}) do |n, h|
-            h[n.text.strip] = n['href']
-
-            ingr = Ingredient.find_by_href(n[:href])
-            unless n[:href] != ingr.href
-              # p '1'
-              @recipe.ingredients.to_a << ingr
-            end
+          # @recipe_ingr = @recipe_url.css('#ingresList > li > a').each_with_object({}) do |n, h|
+          #   h[n.text.strip] = n['href']
+          #
+          #   ingr = Ingredient.find_by_href(n[:href])
+          #   unless n[:href] != ingr.href
+          #     # p '1'
+          #     @recipe.ingredients.to_a << ingr
+          #   end
             @recipe.save!
-
-          end
+          #
+          # end
 
         end
       end
