@@ -42,6 +42,7 @@ gem 'jwt'
 gem 'figaro'
 
 gem 'sidekiq'
+gem 'sidekiq-cron'
 gem 'sinatra', github: 'sinatra/sinatra'
 
 gem 'friendly_id'
