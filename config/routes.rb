@@ -2,6 +2,9 @@ Rails.application.routes.draw do
 
   # resources :ingredients
   # resources :ingredient_categories
+  require 'sidekiq/web'
+  require 'sidekiq/cron/web'
+  mount Sidekiq::Web => '/sidekiq'
 
   root 'users#index'
 
@@ -25,8 +28,5 @@ Rails.application.routes.draw do
   resources :ingredient_categories do
     resources :ingredients
   end
-
-  require 'sidekiq/web'
-  mount Sidekiq::Web => '/sidekiq'
 
 end
