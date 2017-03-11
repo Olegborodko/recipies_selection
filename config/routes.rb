@@ -1,10 +1,9 @@
 Rails.application.routes.draw do
-
   # resources :ingredients
   # resources :ingredient_categories
   require 'sidekiq/web'
   require 'sidekiq/cron/web'
-  mount Sidekiq::Web => '/sidekiq'
+  mount Sidekiq::Web => '/sidekiq', constraints: ApplicationController.new
 
   root 'users#index'
 
