@@ -14,6 +14,12 @@ module SessionHelper
     end
   end
 
+  def key_have
+    if params[:key] == "key_for_another_sites"
+      true
+    end
+  end
+
   #def authorize
   #  redirect_to root_url unless current_user
   #end

@@ -6,19 +6,20 @@ Rails.application.routes.draw do
   mount Sidekiq::Web => '/sidekiq', constraints: ApplicationController.new
 
   root 'users#index'
+  get 'index' => 'users#index', :defaults => { :format => 'json' }
 
   resources :users, except: [:show]
-  get 'signup', to: 'users#new'
-  get 'verification/:id', to: 'users#verification', as: :verification
-  put 'update_description', to: 'users#update_description', as: :update_description
-  get 'restore_password', to: 'users#restore_password', as: :restore_password
-  post 'restore', to: 'users#restore'
+  get 'signup' => 'users#new'
+  get 'verification/:id' => 'users#verification', as: :verification
+  put 'update_description' => 'users#update_description', as: :update_description
+  get 'restore_password' => 'users#restore_password', as: :restore_password
+  post 'restore' => 'users#restore'
 
   namespace :users do
     resources :sessions, only: [:create]
-    get 'sessions', to: 'sessions#new'
-    get 'login', to: 'sessions#new', as: :login
-    delete 'logout/:id', to: 'sessions#destroy', as: :logout
+    get 'sessions' => 'sessions#new'
+    get 'login' => 'sessions#new', as: :login
+    delete 'logout/:id' => 'sessions#destroy', as: :logout
   end
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
