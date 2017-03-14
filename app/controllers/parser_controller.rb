@@ -50,11 +50,11 @@ class ParserController < ApplicationController
           @ingredient = check_existing_category.ingredients.create
           @ingredient.name = ingr_name
           @ingredient.href = href
-          @ingredient.content = @ingredient_url.css('#stages > p').text
-          @ingredient.calories = @ingredient_url.css('#topContributors > li strong')[0].text
-          @ingredient.protein = @ingredient_url.css('#topContributors > li strong')[1].text
-          @ingredient.fat = @ingredient_url.css('#topContributors > li strong')[2].text
-          @ingredient.carbohydrate = @ingredient_url.css('#topContributors > li strong')[3].text
+          @ingredient.content = @ingredient_url.css('#stages > p').text.strip
+          @ingredient.calories = @ingredient_url.css('#topContributors > li strong')[0].text.strip
+          @ingredient.protein = @ingredient_url.css('#topContributors > li strong')[1].text.strip
+          @ingredient.fat = @ingredient_url.css('#topContributors > li strong')[2].text.strip
+          @ingredient.carbohydrate = @ingredient_url.css('#topContributors > li strong')[3].text.strip
           @ingredient.save!
         end
       end
@@ -96,34 +96,51 @@ class ParserController < ApplicationController
     end
 
     @recipes2.each do |category, recipes_hash|
-      check_existing_category = RecipeCategory.find_by_title(category)
-      if nil.equal?(check_existing_category)
-        category_new = RecipeCategory.new(title: category)
-        category_new.save!
-        check_existing_category = RecipeCategory.find_by_title(category)
+      check_existing_rec_category = RecipeCategory.find_by_title(category)
+      if nil.equal?(check_existing_rec_category)
+        rec_category_new = RecipeCategory.new(title: category)
+        rec_category_new.save!
+        check_existing_rec_category = RecipeCategory.find_by_title(category)
       end
       recipes_hash.each do |recipe_name, href|
         check_existing_recipe = Recipe.find_by_name(recipe_name)
         if nil.equal?(check_existing_recipe)
           @recipe_url = Nokogiri::HTML(open(href))
-          @recipe = check_existing_category.recipes.create
+          @recipe = check_existing_rec_category.recipes.create
           @recipe.name = recipe_name
           @recipe.content = @recipe_url.css('#stages div.instructions').text.strip
           @recipe.cooking_time = @recipe_url.css('#stages > p').text.strip
           @recipe.ccal = @recipe_url.css('#stages > h2').text.strip
 
           # @recipe.ingredients = @recipe_url.css('#ingresList > li:nth-child(1) > a').text
-          @recipe_ingr = @recipe_url.css('#ingresList > li > a').each_with_object({}) do |n, h|
-            h[n.text.strip] = n['href']
+          @recipe_ingr = @recipe_url.css('#ingresList > li > a')
+          rec_ingr_hash = @recipe_ingr.each_with_object({}) do |name, link|
+            link[name.text.strip] = name['href']
 
-            ingr = Ingredient.find_by_href(n[:href])
-            unless n[:href] != ingr.href
-              # p '1'
-              @recipe.ingredients.to_a << ingr
+            ingr = Ingredient.find_by_href(name[:href])
+            if nil.equal?(ingr)
+              ingredient_url = Nokogiri::HTML(open(name[:href]))
+
+              category_new = IngredientCategory.new(title: "Другие")
+              category_new.save!
+              check_existing_category = IngredientCategory.find_by_title("Другие")
+              @ingredient = check_existing_category.ingredients.create
+
+              # @ingredient = Ingredient.create
+              @ingredient.name = ingredient_url.css('#singleFile > h1').text.strip
+              @ingredient.href = name[:href]
+              @ingredient.content = ingredient_url.css('#stages > p').text.strip
+              @ingredient.calories = ingredient_url.css('#topContributors > li strong')[0].text.strip
+              @ingredient.protein = ingredient_url.css('#topContributors > li strong')[1].text.strip
+              @ingredient.fat = ingredient_url.css('#topContributors > li strong')[2].text.strip
+              @ingredient.carbohydrate = ingredient_url.css('#topContributors > li strong')[3].text.strip
+              @recipe.ingredients << @ingredient
+              @ingredient.save!
+            else
+              @recipe.ingredients << ingr if name[:href] == ingr.href
             end
-          @recipe.save!
-          #
           end
+          @recipe.save!
 
         end
       end
@@ -131,3 +148,9 @@ class ParserController < ApplicationController
   end
 end
 
+#@recipes_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s))
+# rec_url = @recipes_url.css('div.post > h5:nth-child(2) > a:nth-child(1)')
+#
+# recipes_hash = rec_url.each_with_object({}) do |recipe_name_tag, value|
+#   value[recipe_name_tag.text.strip] = recipe_name_tag["href"]
+# end
