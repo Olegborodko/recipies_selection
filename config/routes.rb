@@ -19,6 +19,8 @@ Rails.application.routes.draw do
     resources :users 
   end
 
+
+
   namespace :users do
     resources :sessions, only: [:create]
     get 'sessions', to: 'sessions#new'

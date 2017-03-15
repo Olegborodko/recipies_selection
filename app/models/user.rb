@@ -1,4 +1,8 @@
 class User < ApplicationRecord
+  def to_param
+    "#{id} #{name}".parameterize
+  end
+
   extend FriendlyId
   friendly_id :name, use: :slugged
 
