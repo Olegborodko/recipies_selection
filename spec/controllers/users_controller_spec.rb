@@ -27,13 +27,14 @@ describe UsersController do
                                   description: "test"}}
     user = User.last
     expect(user.email).to eq(@email_for_test)
-
-    #last_delivery = ActionMailer::Base.deliveries.last
-    #expect(@email_for_test).to eq(last_delivery[0])
-    last_delivery = ActionMailer::Base.deliveries.last
-    last_delivery.body.raw_source.should include "This is the text of the email"
-
     is_expected.to redirect_to(root_url)
+  end
+
+  it "sends an email" do
+    email = UserMailer.password_new(@email_for_test, "password_test").deliver
+    m = ActionMailer::Base.deliveries
+    expect(m.count).to eq(1)
+    expect(email.html_part.body).to include("Hello, your new password")
   end
 
   it "verification" do

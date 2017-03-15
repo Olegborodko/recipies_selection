@@ -35,9 +35,9 @@ Rails.application.configure do
 
   #ActionMailer::Base.delivery_method = :test
   config.action_mailer.delivery_method = :test
-  #config.action_mailer.default_url_options = { host: "example.com" }
+  config.action_mailer.default_url_options = { host: "example.com" }
   config.active_job.queue_adapter = :test
-  config.action_mailer.perform_deliveries = true
+  #config.action_mailer.perform_deliveries = true
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
