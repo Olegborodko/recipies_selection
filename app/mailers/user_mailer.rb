@@ -5,9 +5,18 @@ class UserMailer < ApplicationMailer
   #
   #   en.user_mailer.create.subject
   #
-  def create
-    @greeting = "Hi"
+  def create(user_to, user_rid)
+    hmac_secret = 'autorization_secret_key_from_users08'
+    payload = {:key =>  user_rid}
 
-    mail to: "220v2@mail.ru", subject: "subject_test"
+    @token = JWT.encode payload, hmac_secret, 'HS256'
+    @token = Base64.encode64(@token)
+
+    mail to: user_to, subject: "Registration confirmation"
+  end
+
+  def password_new(user_to, password)
+    @password = password
+    mail to: user_to, subject: "Password Restore"
   end
 end

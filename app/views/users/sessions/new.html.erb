@@ -1,0 +1,14 @@
+<h1>Sign in</h1>
+<%= form_for :session, url: {action: "create"}, html: {class: "user_form"} do |f| %>
+    <div class="form-group">
+      <%= f.email_field :email, class: "form-control", placeholder: "email" %>
+    </div>
+    <div class="form-group">
+      <%= f.password_field :password, class: "form-control", placeholder: "password" %>
+    </div>
+    <div class="form-group">
+      <%= f.submit "Sign in", class: "btn, btn-default" %>
+    </div>
+<% end %>
+
+<div><a class="underline" href="<%= restore_password_path() %>">Restore password</a></div>
