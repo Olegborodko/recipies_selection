@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 20170315121656) do
   create_table "ingredients", force: :cascade do |t|
     t.string   "name"
     t.text     "content"
+    t.string   "href"
     t.integer  "ingredient_category_id"
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
@@ -76,7 +77,7 @@ ActiveRecord::Schema.define(version: 20170315121656) do
     t.integer  "recipe_category_id"
     t.string   "cooking_time"
     t.string   "number_of_ingredients"
-    t.integer  "ccal"
+    t.string   "ccal"
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
     t.index ["recipe_category_id"], name: "index_recipes_on_recipe_category_id", using: :btree

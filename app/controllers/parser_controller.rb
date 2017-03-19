@@ -134,9 +134,11 @@ class ParserController < ApplicationController
               @ingredient.fat = ingredient_url.css('#topContributors > li strong')[2].text.strip
               @ingredient.carbohydrate = ingredient_url.css('#topContributors > li strong')[3].text.strip
               @recipe.ingredients << @ingredient
+              # @recipe.number_of_ingredients = @recipe_url.css('#ingresList > li > span').text.strip
               @ingredient.save!
             else
               @recipe.ingredients << ingr if name[:href] == ingr.href
+              # @recipe.number_of_ingredients = @recipe_url.css('#ingresList > li > span').text
 
             end
           end

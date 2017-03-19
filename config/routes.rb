@@ -1,11 +1,9 @@
 Rails.application.routes.draw do
-  # resources :ingredients
-  # resources :ingredient_categories
+
   require 'sidekiq/web'
   require 'sidekiq/cron/web'
   mount Sidekiq::Web => '/sidekiq', constraints: ApplicationController.new
 
-  root 'users#index'
   get 'index' => 'users#index', :defaults => { :format => 'json' }
 
   resources :users, except: [:show]
@@ -22,14 +20,17 @@ Rails.application.routes.draw do
     delete 'logout/:id' => 'sessions#destroy', as: :logout
   end
 
-  mount UsersApi::ApiUsersController => '/'
+  # mount UsersApi::ApiUsersController => '/'
   mount GrapeSwaggerRails::Engine => '/swagger'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   get 'parser' => 'parser#index'
-  resources :ingredient_categories do
-    resources :ingredients
-  end
+  # resources :ingredient_categories do
+  #   resources :ingredients
+  # end
+
+  mount Api => '/'
+  root 'users#index'
 
 end
