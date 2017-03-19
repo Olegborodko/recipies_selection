@@ -48,8 +48,12 @@ gem 'sinatra', github: 'sinatra/sinatra'
 gem 'friendly_id'
 
 gem 'grape'
+gem 'grape-entity'
 gem 'grape-swagger'
 gem 'grape-swagger-rails'
+# gem 'grape-swagger', '~> 0.26.1'
+# gem 'grape-swagger-rails', '~> 0.3.0'
+
 gem 'hashie-forbidden_attributes'
 
 gem 'grape-swagger-entity'

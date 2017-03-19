@@ -19,7 +19,7 @@ class ParserController < ApplicationController
       page_number = 0
       @ingredients2[category_name] = []
       while page_number < 1000
-        @ingredients_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s))  #(open(href+'/page/'+page_number.to_s))
+        @ingredients_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s)) #(open(href+'/page/'+page_number.to_s))
         ingredients_hash = @ingredients_url.css('div#postsContainer div.post h5 a.arecipe')
 
         ingr_hash = ingredients_hash.each_with_object({}) do |ingredient_name_tag, value|
@@ -112,7 +112,6 @@ class ParserController < ApplicationController
           @recipe.cooking_time = @recipe_url.css('#stages > p').text.strip
           @recipe.ccal = @recipe_url.css('#stages > h2').text.strip
 
-          # @recipe.ingredients = @recipe_url.css('#ingresList > li:nth-child(1) > a').text
           @recipe_ingr = @recipe_url.css('#ingresList > li > a')
           rec_ingr_hash = @recipe_ingr.each_with_object({}) do |name, link|
             link[name.text.strip] = name['href']
@@ -135,9 +134,12 @@ class ParserController < ApplicationController
               @ingredient.fat = ingredient_url.css('#topContributors > li strong')[2].text.strip
               @ingredient.carbohydrate = ingredient_url.css('#topContributors > li strong')[3].text.strip
               @recipe.ingredients << @ingredient
+              # @recipe.number_of_ingredients = @recipe_url.css('#ingresList > li > span').text.strip
               @ingredient.save!
             else
               @recipe.ingredients << ingr if name[:href] == ingr.href
+              # @recipe.number_of_ingredients = @recipe_url.css('#ingresList > li > span').text
+
             end
           end
           @recipe.save!
@@ -148,9 +150,4 @@ class ParserController < ApplicationController
   end
 end
 
-#@recipes_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s))
-# rec_url = @recipes_url.css('div.post > h5:nth-child(2) > a:nth-child(1)')
-#
-# recipes_hash = rec_url.each_with_object({}) do |recipe_name_tag, value|
-#   value[recipe_name_tag.text.strip] = recipe_name_tag["href"]
-# end
+

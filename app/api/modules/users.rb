@@ -1,6 +1,6 @@
-module Users
+module Modules
 
-  class ApiUsersController < Api
+  class Users < Grape::API
     prefix 'api'
     format :json
 
@@ -23,9 +23,9 @@ module Users
 
       ####################################POST api/users
       desc 'Create a new user', {
-        is_array: true,
-        success: Entities::UserCreate,
-        failure: [{ code: 400, message: 'Invalid parameter entry' }]
+      is_array: true,
+      success: Entities::UserCreate,
+      failure: [{ code: 400, message: 'Invalid parameter entry' }]
       }
 
       params do
@@ -56,9 +56,9 @@ module Users
 
       #########################################GET /api/users/verification
       desc 'User verification', {
-        is_array: true,
-        success: { massage: 'authorized' },
-        failure: [{ code: 400, message: 'Invalid key' }]
+      is_array: true,
+      success: { massage: 'authorized' },
+      failure: [{ code: 400, message: 'Invalid key' }]
       }
 
       params do
@@ -77,26 +77,26 @@ module Users
 
         user = User.find_by rid: decoded_token[0]['key']
 
-          if user
-            time_now = Time.now
+        if user
+          time_now = Time.now
 
-            if user.created_at + ENV['time_for_audentification'].to_i > time_now
-              user.update_attribute(:role_id, 2)
-              return { messages: 'authorized' }
-            else
-              user.destroy
-              return { message: 'error time audentification' }
-            end
+          if user.created_at + ENV['time_for_audentification'].to_i > time_now
+            user.update_attribute(:role_id, 2)
+            return { messages: 'authorized' }
+          else
+            user.destroy
+            return { message: 'error time audentification' }
           end
-          { message: 'user not found' }
+        end
+        { message: 'user not found' }
       end
 
 
       #########################################PATCH /api/users/:id
       desc 'User update', {
-        is_array: true,
-        success: Entities::UserCreate,
-        failure: [{ code: 400, message: 'Invalid parameter entry' }]
+      is_array: true,
+      success: Entities::UserUpdate,
+      failure: [{ code: 400, message: 'Invalid parameter entry' }]
       }
 
       params do
