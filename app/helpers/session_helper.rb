@@ -20,7 +20,11 @@ module SessionHelper
     end
   end
 
-  #def authorize
-  #  redirect_to root_url unless current_user
-  #end
+  def token(user_rid)
+    hmac_secret = 'autorization_secret_key_from_users08'
+    payload = {:key =>  user_rid}
+    token = JWT.encode payload, hmac_secret, 'HS256'
+    Base64.strict_encode64(token)
+  end
+
 end

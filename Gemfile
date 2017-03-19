@@ -52,6 +52,8 @@ gem 'grape-swagger'
 gem 'grape-swagger-rails'
 gem 'hashie-forbidden_attributes'
 
+gem 'grape-swagger-entity'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri

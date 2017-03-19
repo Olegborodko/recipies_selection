@@ -13,7 +13,8 @@ class UsersController < ApplicationController
       user = User.new(person_params)
 
       if user.save
-        EmailUserCreateJob.perform_later(user.email, user.rid)
+        path = verification_url(token(user.rid))
+        EmailUserCreateJob.perform_later(user.email, path)
         #UserMailer.create(user.email, user.rid).deliver_now
 
         format.html { redirect_to root_url, :notice => "Please check your email, for continues"}
@@ -27,7 +28,7 @@ class UsersController < ApplicationController
   end
 
   def verification
-    tok = Base64.decode64(params[:id])
+    tok = Base64.strict_decode64(params[:id])
     hmac_secret = "autorization_secret_key_from_users08"
 
     begin
