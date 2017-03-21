@@ -1,0 +1,157 @@
+module Modules
+
+  class UsersApi < Grape::API
+    prefix 'api'
+    format :json
+
+    #helpers Helpers::ApiUserHelper
+    #require 'user_helpered.rb'
+    #n = Apihelpers::UserHelpered.api_helper_authentication
+
+    #n = UserHelpered.new()
+
+    helpers do
+      include SessionHelper
+      include UserHelpers
+    end
+
+    before do
+
+    end
+
+    resource :users do
+      before do
+
+      end
+
+      ####################################POST api/users
+      desc 'Create a new user', {
+      is_array: true,
+      success: { code: 200, model: Entities::UserCreate },
+      failure: [{ code: 400, message: 'Parameters contain errors' }]
+      }
+
+      params do
+        requires :user, type: Hash do
+          requires :email, allow_blank: false, regexp: /.+@.+/, desc: 'users email'
+          requires :name, type: String, desc: 'users name'
+          requires :password, type: String, desc: 'users password'
+          requires :password_confirmation, type: String, desc: 'users password confirmation'
+          optional :description, type: String, desc: 'users description'
+        end
+      end
+
+      post do
+        #User.delete_all
+        user = User.new(declared(params, include_missing: false)[:user])
+
+        if user.save
+          status 200
+          #path = Rails.application.routes.url_helpers.root_url + 'api/users/verification/' + token(user.rid)
+          #EmailUserCreateJob.perform_later(user.email, path)
+          present user, with: Entities::UserCreate, message: 'Please use token in 24 hours, else user will delete', token: token_encode(user.rid)
+          ##{ user: user, message: "success, please check your email" }
+        else
+          status 400
+          { errors: user.errors }
+        end
+      end
+
+
+      #########################################GET /api/users/verification
+      desc 'User verification', {
+      is_array: false,
+      success: { massage: 'authorized', code: 200 },
+      failure: [{ code: 400, message: 'Invalid key' },
+      { code: 401, message: 'Error time audentification' }]
+      }
+
+      params do
+        requires :id, desc: 'users token'
+      end
+
+      get 'verification/:id' do
+
+        user = token_decode(declared(params, include_missing: false)[:id]) do
+          status 400
+          return { error: 'Invalid key' }
+        end
+
+        if user
+          time_now = Time.now
+
+          if user.created_at + ENV['time_for_audentification'].to_i > time_now
+            set_subscriber(user)
+            return { messages: 'authorized' }
+          else
+            user.destroy
+            status 401
+            return { error: 'error time audentification' }
+          end
+        end
+        status 400
+        { error: 'Invalid key' }
+      end
+
+      #########################################POST /api/users/login
+      desc 'User login', {
+      is_array: true,
+      success: { code: 200, massage: 'login success' },
+      failure: [{ code: 400, message: 'Not correct password or email' }]
+      }
+
+      params do
+        requires :email, allow_blank: false, regexp: /.+@.+/, desc: 'users email'
+        requires :password, type: String, desc: 'users password'
+      end
+
+      post :login do
+        user = api_helper_authentication( declared(params)[:email], declared(params)[:password] )
+
+        if user
+          status 200
+          { token: token_encode(user.rid), message: 'login success' }
+        else
+          status 400
+          { error: 'Not correct password or email' }
+        end
+      end
+
+
+      #########################################PATCH /api/users/:id
+      desc 'User update', {
+      is_array: true,
+      success: Entities::UserUpdate,
+      failure: [{ code: 400, message: 'Invalid parameter entry' }]
+      }
+
+      params do
+        requires :user_token, type: String, desc: 'users token'
+        requires :description, type: String, desc: 'users description'
+      end
+
+      #patch :custom_url do
+      patch do
+        user = token_decode(declared(params, include_missing: false)[:user_token]) do
+          status 400
+          return { error: 'Invalid users token' }
+        end
+
+        if user
+          user.update_attribute(:description, declared(params, include_missing: false)[:description])
+          status 200
+          present user, with: Entities::UserUpdate
+        else
+          status 400
+          { error: 'Invalid users token' }
+        end
+
+
+      end
+
+
+    end
+
+    add_swagger_documentation
+  end
+end

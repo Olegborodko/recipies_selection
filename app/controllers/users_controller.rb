@@ -13,7 +13,7 @@ class UsersController < ApplicationController
       user = User.new(person_params)
 
       if user.save
-        path = verification_url(token(user.rid))
+        path = verification_url(token_encode(user.rid))
         EmailUserCreateJob.perform_later(user.email, path)
         #UserMailer.create(user.email, user.rid).deliver_now
 
@@ -28,25 +28,20 @@ class UsersController < ApplicationController
   end
 
   def verification
-    tok = Base64.strict_decode64(params[:id])
-    hmac_secret = "autorization_secret_key_from_users08"
 
-    begin
-      decoded_token = JWT.decode tok, hmac_secret, true, { :algorithm => "HS256" }
-    rescue
+    user = token_decode(params[:id]) do
       respond_to do |format|
         format.html { redirect_to root_url, :notice => "Your authorization is not valid" and return }
         format.json { render json: { message: "key is invalid" }, status: :unprocessable_entity and return }
       end
     end
-    user = User.find_by rid: decoded_token[0]['key']
 
     respond_to do |format|
       if user
         time_now = Time.now
 
         if user.created_at + ENV["time_for_audentification"].to_i > time_now
-          user.update_attribute(:role_id, 2)
+          set_subscriber(user)
           format.html { redirect_to root_url, :notice => "Thank you now you are authorized" and return }
           format.json { render json: { message: "authorized" }, status: :ok and return }
         else
@@ -88,7 +83,7 @@ class UsersController < ApplicationController
 
   def update_description
     respond_to do |format|
-      if @current_user.update_attribute(:description, user_change[:description])
+      if @current_user.update_attribute(:description, user_change[:description]) && @current_user.role_id != 1
         format.html { redirect_to root_url, :notice => "Your description was changed" }
         format.json { render json: { message: "description was changed" }, status: :ok }
       else
