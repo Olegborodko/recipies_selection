@@ -30,6 +30,9 @@ module Modules
             requires :content, type: String
             requires :cooking_time, type: String
             requires :ccal, type: String
+            # requires :components, type Hash do
+            #   requires
+            # end
 
           end
         end
