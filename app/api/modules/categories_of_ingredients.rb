@@ -3,7 +3,6 @@ module Modules
     prefix :api
     format :json
 
-    desc 'Ingredients controller'
     resource :categories_of_ingredients do
       desc 'All categories'
 

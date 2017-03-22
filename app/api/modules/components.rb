@@ -20,8 +20,11 @@ module Modules
         end
 
         desc 'Current ingredient in current category'
+        params do
+          requires :id, type: Integer
+        end
         get ':id' do
-          {category_of_ingredients_id: params[:id]}
+          {component: params[:id]}
         end
 
         params do
@@ -45,16 +48,25 @@ module Modules
         end
 
         desc 'Update ingredient'
+        params do
+          requires :id, type: String
+          optional :name, type: String
+          optional :content, type: String
+          optional :href, type: String
+          optional :calories, type: Float
+          optional :protein, type: Float
+          optional :fat, type: Float
+          optional :carbohydrate, type: Float
+        end
         put ':id' do
           component = set_category.ingredients.find(params[:id])
-          component.update({
-              name: params[:name],
-              content: params[:content],
-              href: params[:href],
-              calories: params[:calories],
-              protein: params[:protein],
-              fat: params[:fat],
-              carbohydrate: params[:carbohydrate]})
+          component.update({name: params[:name],
+                            content: params[:content],
+                            href: params[:href],
+                            calories: params[:calories],
+                            protein: params[:protein],
+                            fat: params[:fat],
+                            carbohydrate: params[:carbohydrate]})
         end
 
         desc 'Delete ingredient'
