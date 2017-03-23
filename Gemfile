@@ -81,3 +81,6 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'nokogiri'
+
+gem 'thinking-sphinx' # must install sphinx on localhost from http://freelancing-gods.com/thinking-sphinx/installing_sphinx.html
+gem 'mysql2', :platform => :ruby
