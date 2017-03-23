@@ -4,21 +4,21 @@
 
 <table>
   <thead>
-    <tr>
-      <th>Title</th>
-      <th colspan="3"></th>
-    </tr>
+  <tr>
+    <th>Title</th>
+    <th colspan="3"></th>
+  </tr>
   </thead>
 
   <tbody>
-    <% @ingredient_categories.each do |ingredient_category| %>
+  <% @ingredient_categories.each do |ingredient_category| %>
       <tr>
         <td><%= ingredient_category.title %></td>
         <td><%= link_to 'Show', ingredient_category %></td>
         <td><%= link_to 'Edit', edit_ingredient_category_path(ingredient_category) %></td>
-        <td><%= link_to 'Destroy', ingredient_category, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Destroy', ingredient_category, method: :delete, data: {confirm: 'Are you sure?'} %></td>
       </tr>
-    <% end %>
+  <% end %>
   </tbody>
 </table>
 
