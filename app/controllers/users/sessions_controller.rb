@@ -9,7 +9,7 @@ class Users::SessionsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to root_url }
-      format.json { render json: { message: "session destroy" }, status: :ok }
+      format.json { render json: {message: "session destroy"}, status: :ok }
     end
   end
 
@@ -20,11 +20,11 @@ class Users::SessionsController < ApplicationController
     respond_to do |format|
       if authentication(person_params[:email], person_params[:password])
         format.html { redirect_to root_url, :notice => "You are logged in" }
-        format.json { render json: { message: "logged in" }, status: :ok }
+        format.json { render json: {message: "logged in"}, status: :ok }
       else
         flash.now[:error] = "Not correct password or email"
         format.html { render :new }
-        format.json { render json: { message: "not correct password or email" }, status: :unprocessable_entity }
+        format.json { render json: {message: "not correct password or email"}, status: :unprocessable_entity }
       end
     end
   end

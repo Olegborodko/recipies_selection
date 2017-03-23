@@ -64,13 +64,13 @@ class IngredientCategoriesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_ingredient_category
-      @ingredient_category = IngredientCategory.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_ingredient_category
+    @ingredient_category = IngredientCategory.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def ingredient_category_params
-      params.require(:ingredient_category).permit(:title)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def ingredient_category_params
+    params.require(:ingredient_category).permit(:title)
+  end
 end

@@ -56,9 +56,9 @@ module Modules
         put ':id' do
           receipt = set_category.recipes.find(params[:id])
           receipt.update({name: params[:name],
-                            content: params[:content],
-                            cooking_time: params[:cooking_time],
-                            ccal: params[:ccal]})
+                          content: params[:content],
+                          cooking_time: params[:cooking_time],
+                          ccal: params[:ccal]})
         end
 
         desc 'Delete receipt'

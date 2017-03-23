@@ -5,11 +5,11 @@ class Recipe < ApplicationRecord
   has_many :ingredients, through: :recipe_ingredients
 
   has_many :favorite_recipes
-  # has_many :users, :through => :favorite_recipes
+  # has_many (or has_and_belongs_to_many):users, :through => :favorite_recipes    <- need create join table recipes_users
 
   include PgSearch
   pg_search_scope :search, against: [:name, :content],
-                  using:{tsearch: {dictionary: "english"}},
+                  using: {tsearch: {dictionary: "english"}},
                   associated_against: {recipe_category: :title, ingredients: [:name, :content],
                                        # users: [:name, :email, :slug]
                   },

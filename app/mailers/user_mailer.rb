@@ -7,7 +7,7 @@ class UserMailer < ApplicationMailer
   #
   def create(user_to, user_rid)
     hmac_secret = 'autorization_secret_key_from_users08'
-    payload = {:key =>  user_rid}
+    payload = {:key => user_rid}
 
     @token = JWT.encode payload, hmac_secret, 'HS256'
     @token = Base64.encode64(@token)
