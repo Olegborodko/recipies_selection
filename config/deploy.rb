@@ -6,9 +6,9 @@ set :rvm_ruby_version, "2.3.3@project"
 set :branch, "production"
 set :application, "project"
 
-set :repo_url, "/git_project"
+set :repo_url, "/root/git_project/"
 
-set :deploy_to, "/#{fetch(:application)}"
+set :deploy_to, "/root/#{fetch(:application)}"
 
 append :linked_files, "config/database.yml", "config/secrets.yml"
 append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets"
