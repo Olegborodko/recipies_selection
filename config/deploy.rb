@@ -3,12 +3,12 @@ lock "3.8.0"
 
 set :rvm_ruby_version, "2.3.3@project"
 
-set :branch, "oleg"
+set :branch, "production"
 set :application, "project"
 
-set :repo_url, "/home/oleg/git_project"
+set :repo_url, "/git_project"
 
-set :deploy_to, "/home/oleg/#{fetch(:application)}"
+set :deploy_to, "/#{fetch(:application)}"
 
 append :linked_files, "config/database.yml", "config/secrets.yml"
 append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets"

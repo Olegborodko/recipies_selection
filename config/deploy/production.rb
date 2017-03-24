@@ -1,4 +1,4 @@
-server "year-week.date", user: "oleg", roles: %w{app web db}, ssh_options: {forward_agent: true}
+server "year-week.date", user: "root", roles: %w{app web db}, ssh_options: {forward_agent: true}
 
 # server-based syntax
 # ======================
