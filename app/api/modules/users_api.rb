@@ -149,6 +149,71 @@ module Modules
 
       end
 
+      ############################################GET /api/users/:id
+      desc 'User information', {
+      is_array: true,
+      success: Entities::UserInfo,
+      failure: [{ code: 400, message: 'Invalid users token' }]
+      }
+
+      params do
+        requires :user_token, type: String, desc: 'users token'
+      end
+
+      get do
+
+        user = token_decode(declared(params, include_missing: false)[:user_token]) do
+          status 400
+          return { error: 'Invalid users token' }
+        end
+
+        if user
+          status 200
+          present user, with: Entities::UserInfo
+        else
+          status 400
+          { error: 'Invalid users token' }
+        end
+      end
+
+      ###############################################POST /api/users/restore_password
+      desc 'Set new password', {
+      is_array: true,
+      success: { code: 200, message: 'success' },
+      failure: [{ code: 400, message: 'Invalid users token' },
+                { code: 401, message: 'Invalid name or email' }]
+      }
+
+      params do
+        requires :user_token, type: String, desc: 'users token'
+        requires :name, type: String, desc: 'users name'
+        requires :email, type: String, desc: 'users email'
+      end
+
+      post :restore_password do
+        user = token_decode(declared(params, include_missing: false)[:user_token]) do
+          status 400
+          return { error: 'Invalid users token' }
+        end
+
+        if user
+          if user.name == declared(params, include_missing: false)[:name] &&
+             user.email == declared(params, include_missing: false)[:email]
+
+             o = [("a".."z"), ("A".."Z")].map(&:to_a).flatten
+             p_new = (0...20).map { o[rand(o.length)] }.join
+
+             user.update_attribute(:password, p_new)
+
+             status 200
+             return { message: 'success', password: p_new }
+          end
+        end
+        status 401
+        { error: 'Invalid name or email' }
+      end
+
+
 
     end
 
