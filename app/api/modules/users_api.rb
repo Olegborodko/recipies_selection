@@ -217,6 +217,6 @@ module Modules
 
     end
 
-    add_swagger_documentation
+    #add_swagger_documentation
   end
 end
