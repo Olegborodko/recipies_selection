@@ -5,7 +5,6 @@ class UserMailer < ApplicationMailer
   #
   #   en.user_mailer.create.subject
   #
-
   def create(user_to, path)
     @path = path
     mail to: user_to, subject: "Registration confirmation"

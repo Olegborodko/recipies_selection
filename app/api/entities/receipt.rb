@@ -1,12 +1,14 @@
-# module Modules
 module Entities
-  class CategoryOfIngredients < Grape::Entity
-    root 'categories_of_ingredients', 'category_of_ingredients'
+  class Receipt < Grape::Entity
+    root 'receipts', 'receipt'
 
     format_with(:iso_timestamp) { |dt| dt.to_i }
 
     expose :id
-    expose :title
+    expose :name
+    expose :content
+    expose :cooking_time
+    expose :ccal
 
     with_options(format_with: :iso_timestamp) do
       expose :created_at
@@ -14,4 +16,3 @@ module Entities
     end
   end
 end
-# end

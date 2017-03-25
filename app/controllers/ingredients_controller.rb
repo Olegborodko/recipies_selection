@@ -66,16 +66,16 @@ class IngredientsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_ingredient
-      @ingredient_category = IngredientCategory.find(params[:id])
-      @ingredient = @ingredient_category.ingredient.build(ingredient_params)
-      # @post = current_user.posts.build(post_params)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_ingredient
+    @ingredient_category = IngredientCategory.find(params[:id])
+    @ingredient = @ingredient_category.ingredient.build(ingredient_params)
+    # @post = current_user.posts.build(post_params)
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def ingredient_params
-      params.require(:ingredient).permit(:name, :content, :ingredient_category_id)
-      # params.require(:post).permit(:title, :body, :user_id)
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def ingredient_params
+    params.require(:ingredient).permit(:name, :content, :ingredient_category_id)
+    # params.require(:post).permit(:title, :body, :user_id)
+  end
 end
