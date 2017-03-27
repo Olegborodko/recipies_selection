@@ -9,10 +9,9 @@ class Recipe < ApplicationRecord
 
   include PgSearch
   pg_search_scope :search, against: [:name, :content],
-                  using: {tsearch: {dictionary: "english"}},
-                  associated_against: {recipe_category: :title, ingredients: [:name, :content],
-                                       # users: [:name, :email, :slug]
-                  },
+                  using: { tsearch: { dictionary: "english" } },
+                  associated_against: {recipe_category: :title, ingredients: [:name, :content]},
+                  # users: [:name, :email, :slug]
                   ignoring: :accents
 
 
@@ -23,7 +22,8 @@ class Recipe < ApplicationRecord
         ts_rank(to_tsvector(name), plainto_tsquery(#{sanitize(query)})) + 
         ts_rank(to_tsvector(content), plainto_tsquery(#{sanitize(query)}))
       RANK
-      where("to_tsvector('english', name) @@ :q or to_tsvector('english', content) @@ :q", q: query).order("#{rank} desk")
+      where("to_tsvector('english', name) @@ :q or
+             to_tsvector('english', content) @@ :q", q: query).order("#{rank} desk")
     else
       scoped
     end
