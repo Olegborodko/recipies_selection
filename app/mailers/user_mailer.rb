@@ -5,9 +5,13 @@ class UserMailer < ApplicationMailer
   #
   #   en.user_mailer.create.subject
   #
-  def create
-    @greeting = "Hi"
+  def create(user_to, path)
+    @path = path
+    mail to: user_to, subject: "Registration confirmation"
+  end
 
-    mail to: "220v2@mail.ru", subject: "subject_test"
+  def password_new(user_to, password)
+    @password = password
+    mail to: user_to, subject: "Password Restore"
   end
 end

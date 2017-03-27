@@ -39,10 +39,33 @@ gem 'bootstrap-generators'
 gem 'bcrypt', :require => 'bcrypt'
 gem 'validates_email_format_of'
 gem 'jwt'
+gem 'figaro'
+
+gem 'sidekiq'
+gem 'sidekiq-cron'
+gem 'sinatra', github: 'sinatra/sinatra'
+
+gem 'friendly_id'
+
+gem 'grape'
+gem 'grape-entity'
+gem 'grape-swagger'
+gem 'grape-swagger-rails'
+# gem 'grape-swagger', '~> 0.26.1'
+# gem 'grape-swagger-rails', '~> 0.3.0'
+
+gem 'hashie-forbidden_attributes'
+
+gem 'grape-swagger-entity'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
+end
+
+group :test do
+  gem 'rspec-rails'
+  gem 'email_spec'
 end
 
 group :development do
@@ -65,3 +88,5 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'nokogiri'
+
+gem 'pg_search'

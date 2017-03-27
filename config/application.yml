@@ -1,0 +1,2 @@
+time_for_audentification: '86400' #60 * 60 * 24
+token_secret_key: 'autorization_secret_key_from_users08'

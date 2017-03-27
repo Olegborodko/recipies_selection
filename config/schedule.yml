@@ -1,0 +1,4 @@
+delete_not_authorized_users:
+  cron: "1 4 * * 1"
+  class: "CronUserDeleteJob"
+  queue: default
