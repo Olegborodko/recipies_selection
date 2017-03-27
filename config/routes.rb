@@ -32,5 +32,6 @@ Rails.application.routes.draw do
 
   mount Api => '/'
   root 'users#index'
+  get 'recipes' => 'recipes#index'
 
 end
