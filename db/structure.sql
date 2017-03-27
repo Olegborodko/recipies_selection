@@ -195,6 +195,49 @@ ALTER SEQUENCE ingredients_id_seq OWNED BY ingredients.id;
 
 
 --
+-- Name: ingredients_recipes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE ingredients_recipes (
+    recipe_id integer NOT NULL,
+    ingredient_id integer NOT NULL
+);
+
+
+--
+-- Name: pg_search_documents; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE pg_search_documents (
+    id integer NOT NULL,
+    content text,
+    searchable_type character varying,
+    searchable_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: pg_search_documents_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE pg_search_documents_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: pg_search_documents_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE pg_search_documents_id_seq OWNED BY pg_search_documents.id;
+
+
+--
 -- Name: recipe_categories; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -401,6 +444,13 @@ ALTER TABLE ONLY ingredients ALTER COLUMN id SET DEFAULT nextval('ingredients_id
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY pg_search_documents ALTER COLUMN id SET DEFAULT nextval('pg_search_documents_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY recipe_categories ALTER COLUMN id SET DEFAULT nextval('recipe_categories_id_seq'::regclass);
 
 
@@ -470,6 +520,14 @@ ALTER TABLE ONLY ingredient_categories
 
 ALTER TABLE ONLY ingredients
     ADD CONSTRAINT ingredients_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pg_search_documents_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY pg_search_documents
+    ADD CONSTRAINT pg_search_documents_pkey PRIMARY KEY (id);
 
 
 --
@@ -570,6 +628,27 @@ CREATE INDEX index_ingredients_on_ingredient_category_id_and_created_at ON ingre
 
 
 --
+-- Name: index_ingredients_recipes_on_ingredient_id_and_recipe_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ingredients_recipes_on_ingredient_id_and_recipe_id ON ingredients_recipes USING btree (ingredient_id, recipe_id);
+
+
+--
+-- Name: index_ingredients_recipes_on_recipe_id_and_ingredient_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_ingredients_recipes_on_recipe_id_and_ingredient_id ON ingredients_recipes USING btree (recipe_id, ingredient_id);
+
+
+--
+-- Name: index_pg_search_documents_on_searchable_type_and_searchable_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_pg_search_documents_on_searchable_type_and_searchable_id ON pg_search_documents USING btree (searchable_type, searchable_id);
+
+
+--
 -- Name: index_recipe_ingredients_on_ingredient_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -665,6 +744,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20170312122443'),
 ('20170315121656'),
 ('20170323102236'),
-('20170323111527');
+('20170323111527'),
+('20170326191752');
 
 
