@@ -1,0 +1,22 @@
+<h1>Recipes</h1>
+
+<%= form_tag recipes_path, metod: :get do %>
+    <div class="field">
+      <%= text_field_tag :search, params[:search] %>
+      <%= submit_tag "Search", name: nil %>
+    </div>
+<% end %>
+
+<div id="recipes">
+  <%= for recipe in @recipes %>
+      <h3>
+        <%= link_to recipe.name, recipe %>
+        <span class="ingredients">(<%= pluralize(recipe.ingredients.size, 'ingredient') %>) </span>
+      </h3>
+
+      <div class="date">
+        by <%= recipe.recipe_category.title %>
+      </div>
+      <div class="content"> <%= simple_format(recipe.content) %> </div>
+  <% end %>
+</div>
