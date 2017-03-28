@@ -26,9 +26,9 @@ module Modules
 
       ####################################POST api/users
       desc 'Create a new user', {
-      is_array: true,
-      success: { code: 200, model: Entities::UserCreate },
-      failure: [{ code: 400, message: 'Parameters contain errors' }]
+          is_array: true,
+          success: {code: 200, model: Entities::UserCreate},
+          failure: [{code: 400, message: 'Parameters contain errors'}]
       }
 
       params do
@@ -53,17 +53,17 @@ module Modules
           ##{ user: user, message: "success, please check your email" }
         else
           status 400
-          { errors: user.errors }
+          {errors: user.errors}
         end
       end
 
 
       #########################################GET /api/users/verification
       desc 'User verification', {
-      is_array: false,
-      success: { massage: 'authorized', code: 200 },
-      failure: [{ code: 400, message: 'Invalid key' },
-      { code: 401, message: 'Error time audentification' }]
+          is_array: false,
+          success: {massage: 'authorized', code: 200},
+          failure: [{code: 400, message: 'Invalid key'},
+                    {code: 401, message: 'Error time audentification'}]
       }
 
       params do
@@ -74,7 +74,7 @@ module Modules
 
         user = token_decode(declared(params, include_missing: false)[:id]) do
           status 400
-          return { error: 'Invalid key' }
+          return {error: 'Invalid key'}
         end
 
         if user
@@ -82,22 +82,22 @@ module Modules
 
           if user.created_at + ENV['time_for_audentification'].to_i > time_now
             set_subscriber(user)
-            return { messages: 'authorized' }
+            return {messages: 'authorized'}
           else
             user.destroy
             status 401
-            return { error: 'error time audentification' }
+            return {error: 'error time audentification'}
           end
         end
         status 400
-        { error: 'Invalid key' }
+        {error: 'Invalid key'}
       end
 
       #########################################POST /api/users/login
       desc 'User login', {
-      is_array: true,
-      success: { code: 200, massage: 'login success' },
-      failure: [{ code: 400, message: 'Not correct password or email' }]
+          is_array: true,
+          success: {code: 200, massage: 'login success'},
+          failure: [{code: 400, message: 'Not correct password or email'}]
       }
 
       params do
@@ -106,23 +106,23 @@ module Modules
       end
 
       post :login do
-        user = api_helper_authentication( declared(params)[:email], declared(params)[:password] )
+        user = api_helper_authentication(declared(params)[:email], declared(params)[:password])
 
         if user
           status 200
-          { token: token_encode(user.rid), message: 'login success' }
+          {token: token_encode(user.rid), message: 'login success'}
         else
           status 400
-          { error: 'Not correct password or email' }
+          {error: 'Not correct password or email'}
         end
       end
 
 
       #########################################PATCH /api/users/:id
       desc 'User update', {
-      is_array: true,
-      success: Entities::UserUpdate,
-      failure: [{ code: 400, message: 'Invalid parameter entry' }]
+          is_array: true,
+          success: Entities::UserUpdate,
+          failure: [{code: 400, message: 'Invalid parameter entry'}]
       }
 
       params do
@@ -134,7 +134,7 @@ module Modules
       patch do
         user = token_decode(declared(params, include_missing: false)[:user_token]) do
           status 400
-          return { error: 'Invalid users token' }
+          return {error: 'Invalid users token'}
         end
 
         if user
@@ -143,7 +143,7 @@ module Modules
           present user, with: Entities::UserUpdate
         else
           status 400
-          { error: 'Invalid users token' }
+          {error: 'Invalid users token'}
         end
 
 
@@ -151,9 +151,9 @@ module Modules
 
       ############################################GET /api/users/:id
       desc 'User information', {
-      is_array: true,
-      success: Entities::UserInfo,
-      failure: [{ code: 400, message: 'Invalid users token' }]
+          is_array: true,
+          success: Entities::UserInfo,
+          failure: [{code: 400, message: 'Invalid users token'}]
       }
 
       params do
@@ -164,7 +164,7 @@ module Modules
 
         user = token_decode(declared(params, include_missing: false)[:user_token]) do
           status 400
-          return { error: 'Invalid users token' }
+          return {error: 'Invalid users token'}
         end
 
         if user
@@ -172,16 +172,16 @@ module Modules
           present user, with: Entities::UserInfo
         else
           status 400
-          { error: 'Invalid users token' }
+          {error: 'Invalid users token'}
         end
       end
 
       ###############################################POST /api/users/restore_password
       desc 'Set new password', {
-      is_array: true,
-      success: { code: 200, message: 'success' },
-      failure: [{ code: 400, message: 'Invalid users token' },
-                { code: 401, message: 'Invalid name or email' }]
+          is_array: true,
+          success: {code: 200, message: 'success'},
+          failure: [{code: 400, message: 'Invalid users token'},
+                    {code: 401, message: 'Invalid name or email'}]
       }
 
       params do
@@ -193,26 +193,25 @@ module Modules
       post :restore_password do
         user = token_decode(declared(params, include_missing: false)[:user_token]) do
           status 400
-          return { error: 'Invalid users token' }
+          return {error: 'Invalid users token'}
         end
 
         if user
           if user.name == declared(params, include_missing: false)[:name] &&
-             user.email == declared(params, include_missing: false)[:email]
+              user.email == declared(params, include_missing: false)[:email]
 
-             o = [("a".."z"), ("A".."Z")].map(&:to_a).flatten
-             p_new = (0...20).map { o[rand(o.length)] }.join
+            o = [("a".."z"), ("A".."Z")].map(&:to_a).flatten
+            p_new = (0...20).map { o[rand(o.length)] }.join
 
-             user.update_attribute(:password, p_new)
+            user.update_attribute(:password, p_new)
 
-             status 200
-             return { message: 'success', password: p_new }
+            status 200
+            return {message: 'success', password: p_new}
           end
         end
         status 401
-        { error: 'Invalid name or email' }
+        {error: 'Invalid name or email'}
       end
-
 
 
     end

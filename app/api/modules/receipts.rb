@@ -21,9 +21,10 @@ module Modules
 
         desc 'Current recipe in current category'
         get ':id' do
-          {receipt_id: params[:id]}
+          set_category.recipes.find(params[:id])
         end
 
+        desc 'Create new receipt'
         params do
           requires :receipt, type: Hash do
             requires :name, type: String
@@ -36,13 +37,22 @@ module Modules
 
           end
         end
-
-        desc 'Create new receipt'
         post do
-          receipt = set_category.recipes.create(
-              declared(params, include_missing: false)[:receipt])
-          receipt.save
-          present receipt, with: Api::Entities::Receipt
+          begin
+            receipt = set_category.recipes.create({
+                                                      name: params[:name],
+                                                      content: params[:content],
+                                                      cooking_time: params[:cooking_time],
+                                                      ccal: params[:ccal]
+                                                  })
+            if receipt.save
+              {status: :success}
+            else
+              error!({status: :error, message: receipt.errors.full_messages.first}) if receipt.errors.any?
+            end
+          rescue ActiveRecord::RecordNotFound
+            error!({status: :error, message: :not_found}, 404)
+          end
         end
 
         desc 'Update receipt'
@@ -54,18 +64,38 @@ module Modules
           optional :ccal, type: Float
         end
         put ':id' do
-          receipt = set_category.recipes.find(params[:id])
-          receipt.update({name: params[:name],
-                          content: params[:content],
-                          cooking_time: params[:cooking_time],
-                          ccal: params[:ccal]})
+          begin
+            receipt = set_category.recipes.find(params[:id])
+            if receipt.update({
+                                  name: params[:name],
+                                  content: params[:content],
+                                  cooking_time: params[:cooking_time],
+                                  ccal: params[:ccal]
+                              })
+              {status: :success}
+            else
+              error!({status: :error, message: receipt.errors.full_messages.first}) if receipt.errors.any?
+            end
+
+
+          rescue ActiveRecord::RecordNotFound
+            error!({status: :error, message: :not_found}, 404)
+          end
         end
 
         desc 'Delete receipt'
-        delete ':id' do
-          Recipe.find(params[:id]).destroy
+        params do
+          requires :id, type: Integer, desc: "Product id"
         end
 
+        delete ':id' do
+          begin
+            receipt = set_category.recipes.find(params[:id])
+            {status: :success} if receipt.delete
+          rescue ActiveRecord::RecordNotFound
+            error!({status: :error, message: :not_found}, 404)
+          end
+        end
       end
     end
   end
