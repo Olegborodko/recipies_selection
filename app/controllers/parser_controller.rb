@@ -110,22 +110,23 @@ class ParserController < ApplicationController
           @recipe.name = recipe_name
           @recipe.content = @recipe_url.css('#stages div.instructions').text.strip
           @recipe.cooking_time = @recipe_url.css('#stages > p').text.strip
-          @recipe.ccal = @recipe_url.css('#stages > h2').text.strip
+          @recipe.calories = @recipe_url.css('#topContributors > li:nth-child(1) > strong')
+          @recipe.protein = @recipe_url.css('#topContributors > li:nth-child(2) > strong')
+          @recipe.fat = @recipe_url.css('#topContributors > li:nth-child(3) > strong')
+          @recipe.carbohydrate = @recipe_url.css('#topContributors > li:nth-child(4) > strong')
 
           @recipe_ingr = @recipe_url.css('#ingresList > li > a')
           rec_ingr_hash = @recipe_ingr.each_with_object({}) do |name, link|
             link[name.text.strip] = name['href']
-
             ingr = Ingredient.find_by_href(name[:href])
+
             if nil.equal?(ingr)
               ingredient_url = Nokogiri::HTML(open(name[:href]))
-
               category_new = IngredientCategory.new(title: "Другие")
               category_new.save!
               check_existing_category = IngredientCategory.find_by_title("Другие")
+              if check_existing_category
               @ingredient = check_existing_category.ingredients.create
-
-              # @ingredient = Ingredient.create
               @ingredient.name = ingredient_url.css('#singleFile > h1').text.strip
               @ingredient.href = name[:href]
               @ingredient.content = ingredient_url.css('#stages > p').text.strip
@@ -134,11 +135,12 @@ class ParserController < ApplicationController
               @ingredient.fat = ingredient_url.css('#topContributors > li strong')[2].text.strip
               @ingredient.carbohydrate = ingredient_url.css('#topContributors > li strong')[3].text.strip
               @recipe.ingredients << @ingredient
-              # @recipe.number_of_ingredients = @recipe_url.css('#ingresList > li > span').text.strip
+              @recipe.number_of_ingredients = @recipe_url.css('#ingresList > li > span').text.strip
               @ingredient.save!
+                end
             else
               @recipe.ingredients << ingr if name[:href] == ingr.href
-              # @recipe.number_of_ingredients = @recipe_url.css('#ingresList > li > span').text
+              @recipe.number_of_ingredients = @recipe_url.css('#ingresList > li > span').text
 
             end
           end
