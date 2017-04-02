@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
+  before_filter :set_locale
 
   def matches?(request)
     if request.session[:user_id]
@@ -11,4 +12,15 @@ class ApplicationController < ActionController::Base
   end
 
   include SessionHelper
+
+  private
+
+  def set_locale
+    I18n.locale = params[:locale] if params[:locale].present?
+  end
+
+  def default_url_options(options = {})
+    { locale: I18n.locale }.merge options
+  end
+
 end

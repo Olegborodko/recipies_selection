@@ -1,6 +1,6 @@
-<h1>From continue registration in <a href="<%= root_url() %>">RecipiesSelection</a></h1>
-<p>Please go to link <%= link_to 'Verification', @path %></p>
+<h1><%= t("email_text") %> <a href="<%= root_url() %>"> <%= t("site_name") %></a></h1>
+<p><%= t("please_go_to_link") %> <%= link_to 'Verification', @path %></p>
 <br>
 <p>
-  Thank you
+  <%= t("thank_you") %>
 </p>

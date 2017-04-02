@@ -21,3 +21,33 @@
 
 en:
   hello: "Hello world"
+  registration: "Registration"
+
+  form:
+    name: "name"
+    email: "email"
+    password: "password"
+    password_confirmation: "password confirmation"
+    description: "description"
+    create_user: "User Create"
+    old_password: "old password"
+    new_password: "new password"
+    new_password_confirmation: "new password confirmation"
+    update_user_password: "Update user password"
+
+  language: "Language"
+  restore_password: "Restore password"
+  edit: "Edit"
+  change_password: "Change password"
+  change_description: "Change description"
+  update_user_description: "Update user description"
+
+  email_text: "From continue registration in"
+  site_name: "RecipiesSelection"
+  please_go_to_link: "Please go to link"
+  thank_you: "Thank you"
+
+  sign_in: "Sign in"
+  home: "Home"
+  logout: "Logout"
+  close: "Close"
