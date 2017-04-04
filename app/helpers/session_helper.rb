@@ -8,7 +8,7 @@ module SessionHelper
   def authentication(email, password) #nil or session
     if email && password
       user = User.find_by email: email.downcase
-      if user && user.authenticate(password) && !user.unauthorized
+      if user && user.authenticate(password) && !user.unauthorized?
         session[:user_id] = user.rid
       end
     end
@@ -26,20 +26,15 @@ module SessionHelper
     Base64.strict_encode64(token)
   end
 
-  def token_decode(token)
-
+  def get_user_from_token(token)
     begin
       tok = Base64.strict_decode64(token)
       decoded_token = JWT.decode tok, ENV["token_secret_key"], true, { :algorithm => 'HS256' }
     rescue
-      if block_given?
-        yield
-      else
-        return false
-      end
+      return nil
+    else
+      User.find_by rid: decoded_token[0]['key']
     end
-
-    User.find_by rid: decoded_token[0]['key']
   end
 
 end

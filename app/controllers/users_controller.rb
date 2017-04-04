@@ -29,18 +29,13 @@ class UsersController < ApplicationController
 
   def verification
 
-    user = token_decode(params[:id]) do
-      respond_to do |format|
-        format.html { redirect_to root_url, :notice => "Your authorization is not valid" and return }
-        format.json { render json: {message: "key is invalid"}, status: :unprocessable_entity and return }
-      end
-    end
+    user = get_user_from_token(params[:id])
 
     respond_to do |format|
       if user
         time_now = Time.now
 
-        if user.created_at + ENV["time_for_audentification"].to_i > time_now
+        if user.created_at + User.time_for_audentification > time_now
           user.status = "subscriber"
           user.save(validate: false)
           format.html { redirect_to root_url, :notice => "Thank you now you are authorized" and return }

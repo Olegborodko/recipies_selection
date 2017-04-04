@@ -3,7 +3,7 @@ class Api < Grape::API
   # version 'v1'
   format :json
 
-  mount Modules::UsersApi
+  mount Modules::UsersPart
   mount Modules::CategoriesOfIngredients
   mount Modules::CategoriesOfRecipes
   mount Modules::Components

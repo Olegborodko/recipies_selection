@@ -16,6 +16,10 @@ class User < ApplicationRecord
   validates :description, length: {maximum: 1000}
   validates :password, presence: true, confirmation: true, length: {minimum: 6}
 
+  def self.time_for_audentification
+    86400 #60 * 60 * 24  = 1day
+  end
+
   before_create do
     self.email = email.downcase
   end
