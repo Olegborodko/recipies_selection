@@ -41,7 +41,8 @@ class UsersController < ApplicationController
         time_now = Time.now
 
         if user.created_at + ENV["time_for_audentification"].to_i > time_now
-          set_subscriber(user)
+          user.status = "subscriber"
+          user.save(validate: false)
           format.html { redirect_to root_url, :notice => "Thank you now you are authorized" and return }
           format.json { render json: {message: "authorized"}, status: :ok and return }
         else

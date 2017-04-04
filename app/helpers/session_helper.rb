@@ -8,7 +8,7 @@ module SessionHelper
   def authentication(email, password) #nil or session
     if email && password
       user = User.find_by email: email.downcase
-      if user && user.authenticate(password) && !unauthorized?(user.role_id)
+      if user && user.authenticate(password) && !user.unauthorized
         session[:user_id] = user.rid
       end
     end
@@ -40,16 +40,6 @@ module SessionHelper
     end
 
     User.find_by rid: decoded_token[0]['key']
-  end
-
-  def unauthorized?(user_role_id)
-    true if user_role_id == 1
-  end
-
-  def set_subscriber(user)
-    if user.role_id == 1
-      user.update_attribute(:role_id, 2)
-    end
   end
 
 end

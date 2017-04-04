@@ -4,7 +4,7 @@ module UserHelpers
     if email && password
       user = User.find_by email: email.downcase
       if user
-        if user.authenticate(password) && !unauthorized?(user.role_id)
+        if user.authenticate(password) && !user.unauthorized
           user
         end
       end

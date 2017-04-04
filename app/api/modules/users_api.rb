@@ -80,7 +80,8 @@ module Modules
           time_now = Time.now
 
           if user.created_at + ENV['time_for_audentification'].to_i > time_now
-            set_subscriber(user)
+            user.status = "subscriber"
+            user.save(validate: false)
             return { messages: 'authorized' }
           else
             user.destroy

@@ -2,7 +2,8 @@ class User < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
 
-  belongs_to :role
+  enum status: [ :unauthorized, :subscriber, :admin ]
+
   has_many :favorite_recipes
   has_many :recipes, :through => :favorite_recipes
 
