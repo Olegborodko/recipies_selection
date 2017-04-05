@@ -6,9 +6,9 @@ class CreateRecipes < ActiveRecord::Migration[5.0]
       t.integer :recipes_category_id
       t.string :cooking_time
       t.integer :calories
-      t.float :protein
-      t.float :fat
-      t.float :carbohydrate
+      t.integer :protein
+      t.integer :fat
+      t.integer :carbohydrate
 
       t.timestamps
     end

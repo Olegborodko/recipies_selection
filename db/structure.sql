@@ -169,9 +169,9 @@ CREATE TABLE ingredients (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     calories integer,
-    protein double precision,
-    fat double precision,
-    carbohydrate double precision
+    protein integer,
+    fat integer,
+    carbohydrate integer
 );
 
 
@@ -277,9 +277,9 @@ CREATE TABLE recipes (
     recipe_category_id integer,
     cooking_time character varying,
     calories integer,
-    protein double precision,
-    fat double precision,
-    carbohydrate double precision,
+    protein integer,
+    fat integer,
+    carbohydrate integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
