@@ -102,51 +102,73 @@ class ParserController < ApplicationController
         rec_category_new.save!
         check_existing_rec_category = RecipeCategory.find_by_title(category)
       end
+
       recipes_hash.each do |recipe_name, href|
         check_existing_recipe = Recipe.find_by_name(recipe_name)
         if nil.equal?(check_existing_recipe)
-          @recipe_url = Nokogiri::HTML(open(href))
-          @recipe = check_existing_rec_category.recipes.create
-          @recipe.name = recipe_name
-          @recipe.content = @recipe_url.css('#stages div.instructions').text.strip
-          @recipe.cooking_time = @recipe_url.css('#stages > p').text.strip
-          @recipe.ccal = @recipe_url.css('#stages > h2').text.strip
-
-          @recipe_ingr = @recipe_url.css('#ingresList > li > a')
-          rec_ingr_hash = @recipe_ingr.each_with_object({}) do |name, link|
+          populate_recipe(check_existing_rec_category, href, recipe_name)
+          numb_of_ingr = 0
+          @recipe_ingr.each_with_object({}) do |name, link|
             link[name.text.strip] = name['href']
-
             ingr = Ingredient.find_by_href(name[:href])
             if nil.equal?(ingr)
-              ingredient_url = Nokogiri::HTML(open(name[:href]))
-
-              category_new = IngredientCategory.new(title: "Другие")
-              category_new.save!
-              check_existing_category = IngredientCategory.find_by_title("Другие")
-              @ingredient = check_existing_category.ingredients.create
-
-              # @ingredient = Ingredient.create
-              @ingredient.name = ingredient_url.css('#singleFile > h1').text.strip
-              @ingredient.href = name[:href]
-              @ingredient.content = ingredient_url.css('#stages > p').text.strip
-              @ingredient.calories = ingredient_url.css('#topContributors > li strong')[0].text.strip
-              @ingredient.protein = ingredient_url.css('#topContributors > li strong')[1].text.strip
-              @ingredient.fat = ingredient_url.css('#topContributors > li strong')[2].text.strip
-              @ingredient.carbohydrate = ingredient_url.css('#topContributors > li strong')[3].text.strip
-              @recipe.ingredients << @ingredient
-              # @recipe.number_of_ingredients = @recipe_url.css('#ingresList > li > span').text.strip
-              @ingredient.save!
-            else
-              @recipe.ingredients << ingr if name[:href] == ingr.href
-              # @recipe.number_of_ingredients = @recipe_url.css('#ingresList > li > span').text
-
+              populate_other_ingredient(name)
+              # ri = @recipe.recipe_ingredients[numb_of_ingr]
+              # ri.number_of_ingredient = @recipe_url.css('#ingresList > li > span')[numb_of_ingr].text.strip
+            elsif name[:href] == ingr.href
+              @recipe.ingredients << ingr
             end
+            ri = @recipe.recipe_ingredients[numb_of_ingr]
+            ri.number_of_ingredient = @recipe_url.css('#ingresList > li > span')[numb_of_ingr].text.strip
+            ri.save!
+            numb_of_ingr += 1
           end
           @recipe.save!
-
         end
       end
-    end
+
+    end #@recipes2.each
+  end
+
+  def populate_other_ingredient(name)
+    ingredient_url = Nokogiri::HTML(open(name[:href]))
+    category_new = IngredientCategory.new(title: "Другие")
+    category_new.save!
+    check_existing_category = IngredientCategory.find_by_title("Другие")
+    @ingredient = check_existing_category.ingredients.create
+    @ingredient.name = ingredient_url.css('#singleFile > h1').text.strip
+    @ingredient.href = name[:href]
+    @ingredient.content = ingredient_url.css('#stages > p').text.strip
+    @ingredient.calories = ingredient_url.css('#topContributors > li strong')[0].text.strip
+    @ingredient.protein = ingredient_url.css('#topContributors > li strong')[1].text.strip
+    @ingredient.fat = ingredient_url.css('#topContributors > li strong')[2].text.strip
+    @ingredient.carbohydrate = ingredient_url.css('#topContributors > li strong')[3].text.strip
+    @recipe.ingredients << @ingredient
+    # check_existing_category.ingredients.create(
+    #     name: @ingredient_url.css('#singleFile > h1').text.strip,
+    #     href: name[:href],
+    #     content: @ingredient_url.css('#stages > p').text.strip,
+    #     calories: @ingredient_url.css('#topContributors > li strong')[0].text.strip,
+    #     protein: @ingredient_url.css('#topContributors > li strong')[1].text.strip,
+    #     fat: @ingredient_url.css('#topContributors > li strong')[2].text.strip,
+    #     carbohydrate: @ingredient_url.css('#topContributors > li strong')[3].text.strip)
+    @ingredient.save!
+
+    # number_of_ingridient = @recipe_url.css('#ingresList > li > span')[numb_of_ingr].text.strip
+  end
+
+  def populate_recipe(check_existing_rec_category, href, recipe_name)
+    @recipe_url = Nokogiri::HTML(open(href))
+    @recipe = check_existing_rec_category.recipes.create
+    @recipe.name = recipe_name
+    @recipe.content = @recipe_url.css('#stages div.instructions').text.strip
+    @recipe.cooking_time = @recipe_url.css('#stages > p').text.strip
+    @recipe.calories = @recipe_url.css('#topContributors > li:nth-child(1) > strong').text.strip
+    @recipe.protein = @recipe_url.css('#topContributors > li:nth-child(2) > strong').text.strip
+    @recipe.fat = @recipe_url.css('#topContributors > li:nth-child(3) > strong').text.strip
+    @recipe.carbohydrate = @recipe_url.css('#topContributors > li:nth-child(4) > strong').text.strip
+
+    @recipe_ingr = @recipe_url.css('#ingresList > li > a')
   end
 end
 
