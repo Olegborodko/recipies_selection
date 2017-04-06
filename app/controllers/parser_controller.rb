@@ -19,7 +19,7 @@ class ParserController < ApplicationController
       page_number = 0
       @ingredients2[category_name] = []
       while page_number < 1000
-        @ingredients_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s)) #(open(href+'/page/'+page_number.to_s))
+        @ingredients_url = Nokogiri::HTML(open(href+'/page/'+page_number.to_s))
         ingredients_hash = @ingredients_url.css('div#postsContainer div.post h5 a.arecipe')
 
         ingr_hash = ingredients_hash.each_with_object({}) do |ingredient_name_tag, value|
@@ -82,7 +82,6 @@ class ParserController < ApplicationController
           value[recipe_name_tag.text.strip] = recipe_name_tag["href"]
         end
 
-        # unless recipes_hash.empty?
         @recipes.merge!(recipes_hash)
 
         if @recipes2[category_name].empty?
@@ -113,8 +112,6 @@ class ParserController < ApplicationController
             ingr = Ingredient.find_by_href(name[:href])
             if nil.equal?(ingr)
               populate_other_ingredient(name)
-              # ri = @recipe.recipe_ingredients[numb_of_ingr]
-              # ri.number_of_ingredient = @recipe_url.css('#ingresList > li > span')[numb_of_ingr].text.strip
             elsif name[:href] == ingr.href
               @recipe.ingredients << ingr
             end
@@ -126,8 +123,7 @@ class ParserController < ApplicationController
           @recipe.save!
         end
       end
-
-    end #@recipes2.each
+    end
   end
 
   def populate_other_ingredient(name)
@@ -144,17 +140,8 @@ class ParserController < ApplicationController
     @ingredient.fat = ingredient_url.css('#topContributors > li strong')[2].text.strip
     @ingredient.carbohydrate = ingredient_url.css('#topContributors > li strong')[3].text.strip
     @recipe.ingredients << @ingredient
-    # check_existing_category.ingredients.create(
-    #     name: @ingredient_url.css('#singleFile > h1').text.strip,
-    #     href: name[:href],
-    #     content: @ingredient_url.css('#stages > p').text.strip,
-    #     calories: @ingredient_url.css('#topContributors > li strong')[0].text.strip,
-    #     protein: @ingredient_url.css('#topContributors > li strong')[1].text.strip,
-    #     fat: @ingredient_url.css('#topContributors > li strong')[2].text.strip,
-    #     carbohydrate: @ingredient_url.css('#topContributors > li strong')[3].text.strip)
-    @ingredient.save!
 
-    # number_of_ingridient = @recipe_url.css('#ingresList > li > span')[numb_of_ingr].text.strip
+    @ingredient.save!
   end
 
   def populate_recipe(check_existing_rec_category, href, recipe_name)
