@@ -16,6 +16,16 @@ class User < ApplicationRecord
   validates :description, length: {maximum: 1000}
   validates :password, presence: true, confirmation: true, length: {minimum: 6}
 
+  validate :password_complexity
+
+  def password_complexity
+    return if self.password.nil?
+    required_complexity = 2 # we're actually storing this in the configuration of each customer
+    if !CheckPasswordComplexity.new(password, required_complexity).valid?
+      errors.add :password, "Your password does not match the security requirements. Please use A-Z, a-z, 0-9"
+    end
+  end
+
   def self.time_for_audentification
     86400 #60 * 60 * 24  = 1day
   end

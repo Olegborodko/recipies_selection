@@ -98,9 +98,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if user
         if user.name == password[:name]
-
-          o = [("a".."z"), ("A".."Z")].map(&:to_a).flatten
-          p_new = (0...20).map { o[rand(o.length)] }.join
+          p_new = password_generate
 
           if user.update_attribute(:password, p_new)
             EmailSendJob.perform_later(user.email, p_new)

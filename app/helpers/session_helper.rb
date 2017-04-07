@@ -37,4 +37,15 @@ module SessionHelper
     end
   end
 
+  def password_generate
+    password_func(("a".."z"),5) +
+    password_func(("A".."Z"),5) +
+    password_func((0..9),5)
+  end
+
+  def password_func(x, l)
+    o = [x].map(&:to_a).flatten
+    (0...rand(2..l)).map { o[rand(o.length)] }.join
+  end
+
 end

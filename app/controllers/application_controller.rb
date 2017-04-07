@@ -5,8 +5,8 @@ class ApplicationController < ActionController::Base
   def matches?(request)
     if request.session[:user_id]
       user = User.find_by rid: request.session[:user_id]
-      if user.role_id == 3
-        true
+      if user
+        user.admin?
       end
     end
   end

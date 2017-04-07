@@ -4,6 +4,8 @@ module Modules
     prefix 'api'
     format :json
 
+    require 'mandrill'
+
     helpers do
       include SessionHelper
       include UserHelpers
@@ -27,7 +29,7 @@ module Modules
         end
       end
       post do
-        user = User.new(declared(params, include_missing: false)[:user])
+        user = User.new( declared(params, include_missing: false)[:user] )
         if user.save
           present user, with: Entities::UserCreate, message: 'Please use token in 24 hours, else user will delete', token: token_encode(user.rid)
         else
@@ -36,13 +38,12 @@ module Modules
         end
       end
 
-
-      ##GET /api/users/verification
+      ###GET /api/users/verification
       desc 'User verification', {
       is_array: false,
-      success:  { massage: 'authorized' },
-      failure:  [{ code: 401, message: 'Invalid key' },
-                 { code: 406, message: 'Error time audentification' }]
+      success: { massage: 'authorized' },
+      failure: [{ code: 401, message: 'Invalid key' },
+                { code: 406, message: 'Error time audentification' }]
       }
       params do
         requires :user_token, desc: 'users token'
@@ -76,8 +77,7 @@ module Modules
         requires :password, type: String, desc: 'users password'
       end
       post :login do
-        user = api_helper_authentication( declared(params)[:email], declared(params)[:password] )
-
+        user = api_helper_authentication(declared(params)[:email], declared(params)[:password])
         if user
           { token: token_encode(user.rid), message: 'login success' }
         else
@@ -97,9 +97,10 @@ module Modules
         requires :description, type: String, desc: 'users description'
       end
       patch do
-        user = get_user_from_token(declared(params, include_missing: false)[:user_token])
+        all_params = declared(params, include_missing: false).to_hash
+        user = get_user_from_token(all_params['user_token'])
         if user
-          user.update_attribute(:description, declared(params, include_missing: false)[:description])
+          user.update_attribute(:description, all_params['description'])
           present user, with: Entities::UserUpdate
         else
           status 406
@@ -138,14 +139,11 @@ module Modules
         requires :email, type: String, desc: 'users email'
       end
       post :restore_password do
-        user = get_user_from_token(declared(params, include_missing: false)[:user_token])
+        all_params = declared(params, include_missing: false).to_hash
+        user = get_user_from_token(all_params['user_token'])
         if user
-          if user.name == declared(params, include_missing: false)[:name] &&
-          user.email == declared(params, include_missing: false)[:email]
-
-            o = [("a".."z"), ("A".."Z")].map(&:to_a).flatten
-            p_new = (0...20).map { o[rand(o.length)] }.join
-
+          if user.name == all_params['name'] && user.email == all_params['email']
+            p_new = password_generate
             user.update_attribute(:password, p_new)
             return { message: 'success', password: p_new }
           end
@@ -153,6 +151,39 @@ module Modules
         status 406
         { error: 'Invalid name or email' }
       end
+
+      ###POST /api/users/mandrill
+      desc 'Mandrill newsletter', {
+      is_array: true,
+      success: { message: 'letters sent' },
+      failure: [{ code: 406, message: 'mandrill error' }]
+      }
+      params do
+        requires :template_name, type: String, desc: 'template name (example - eat_template)'
+        requires :template_content, type: String, desc: 'template content'
+      end
+      post :mandrill do
+        begin
+          mandrill = Mandrill::API.new 'hPGuymrhVBdrs9PqbOzYNg'
+          template_name = declared(params)[:template_name]
+          template_content = [{"name": "footer", "content": declared(params)[:template_content]}]
+          message = {
+            :subject => "Favorite recipes",
+            :from_name => "user admin@year-week.date",
+            :from_email => "admin@year-week.date",
+            :to => User.all.as_json(only: [:name, :email]),
+            :preserve_recipients => false,
+          }
+          async = false
+          sending = mandrill.messages.send_template template_name, template_content, message, async
+          { message: sending }
+        rescue Mandrill::Error => e
+          status 406
+          { message: "A mandrill error occurred: #{e.class} - #{e.message}" }
+          #raise
+        end
+      end
+
 
     end
   end
