@@ -2,16 +2,12 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.6
--- Dumped by pg_dump version 9.5.6
-
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
-SET row_security = off;
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
@@ -48,7 +44,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
+-- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE ar_internal_metadata (
@@ -60,7 +56,7 @@ CREATE TABLE ar_internal_metadata (
 
 
 --
--- Name: favorite_recipes; Type: TABLE; Schema: public; Owner: -
+-- Name: favorite_recipes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE favorite_recipes (
@@ -93,7 +89,7 @@ ALTER SEQUENCE favorite_recipes_id_seq OWNED BY favorite_recipes.id;
 
 
 --
--- Name: friendly_id_slugs; Type: TABLE; Schema: public; Owner: -
+-- Name: friendly_id_slugs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE friendly_id_slugs (
@@ -126,7 +122,7 @@ ALTER SEQUENCE friendly_id_slugs_id_seq OWNED BY friendly_id_slugs.id;
 
 
 --
--- Name: ingredient_categories; Type: TABLE; Schema: public; Owner: -
+-- Name: ingredient_categories; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE ingredient_categories (
@@ -157,7 +153,7 @@ ALTER SEQUENCE ingredient_categories_id_seq OWNED BY ingredient_categories.id;
 
 
 --
--- Name: ingredients; Type: TABLE; Schema: public; Owner: -
+-- Name: ingredients; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE ingredients (
@@ -169,9 +165,9 @@ CREATE TABLE ingredients (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     calories integer,
-    protein integer,
-    fat integer,
-    carbohydrate integer
+    protein double precision,
+    fat double precision,
+    carbohydrate double precision
 );
 
 
@@ -195,7 +191,7 @@ ALTER SEQUENCE ingredients_id_seq OWNED BY ingredients.id;
 
 
 --
--- Name: ingredients_recipes; Type: TABLE; Schema: public; Owner: -
+-- Name: ingredients_recipes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE ingredients_recipes (
@@ -205,7 +201,7 @@ CREATE TABLE ingredients_recipes (
 
 
 --
--- Name: recipe_categories; Type: TABLE; Schema: public; Owner: -
+-- Name: recipe_categories; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE recipe_categories (
@@ -234,7 +230,7 @@ ALTER SEQUENCE recipe_categories_id_seq OWNED BY recipe_categories.id;
 
 
 --
--- Name: recipe_ingredients; Type: TABLE; Schema: public; Owner: -
+-- Name: recipe_ingredients; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE recipe_ingredients (
@@ -267,7 +263,7 @@ ALTER SEQUENCE recipe_ingredients_id_seq OWNED BY recipe_ingredients.id;
 
 
 --
--- Name: recipes; Type: TABLE; Schema: public; Owner: -
+-- Name: recipes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE recipes (
@@ -276,10 +272,8 @@ CREATE TABLE recipes (
     content text,
     recipe_category_id integer,
     cooking_time character varying,
-    calories integer,
-    protein integer,
-    fat integer,
-    carbohydrate integer,
+    number_of_ingredients character varying,
+    ccal character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -305,38 +299,7 @@ ALTER SEQUENCE recipes_id_seq OWNED BY recipes.id;
 
 
 --
--- Name: roles; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE roles (
-    id integer NOT NULL,
-    title character varying NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE roles_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
-
-
---
--- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE schema_migrations (
@@ -345,7 +308,7 @@ CREATE TABLE schema_migrations (
 
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: -
+-- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE users (
@@ -353,7 +316,7 @@ CREATE TABLE users (
     email character varying NOT NULL,
     password_digest character varying NOT NULL,
     name character varying NOT NULL,
-    role_id integer DEFAULT 1 NOT NULL,
+    status integer DEFAULT 0 NOT NULL,
     description text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -434,18 +397,11 @@ ALTER TABLE ONLY recipes ALTER COLUMN id SET DEFAULT nextval('recipes_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
 --
--- Name: ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY ar_internal_metadata
@@ -453,7 +409,7 @@ ALTER TABLE ONLY ar_internal_metadata
 
 
 --
--- Name: favorite_recipes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: favorite_recipes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY favorite_recipes
@@ -461,7 +417,7 @@ ALTER TABLE ONLY favorite_recipes
 
 
 --
--- Name: friendly_id_slugs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: friendly_id_slugs_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY friendly_id_slugs
@@ -469,7 +425,7 @@ ALTER TABLE ONLY friendly_id_slugs
 
 
 --
--- Name: ingredient_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ingredient_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY ingredient_categories
@@ -477,7 +433,7 @@ ALTER TABLE ONLY ingredient_categories
 
 
 --
--- Name: ingredients_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ingredients_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY ingredients
@@ -485,7 +441,7 @@ ALTER TABLE ONLY ingredients
 
 
 --
--- Name: recipe_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: recipe_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY recipe_categories
@@ -493,7 +449,7 @@ ALTER TABLE ONLY recipe_categories
 
 
 --
--- Name: recipe_ingredients_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: recipe_ingredients_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY recipe_ingredients
@@ -501,7 +457,7 @@ ALTER TABLE ONLY recipe_ingredients
 
 
 --
--- Name: recipes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: recipes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY recipes
@@ -509,15 +465,7 @@ ALTER TABLE ONLY recipes
 
 
 --
--- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY roles
-    ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
-
-
---
--- Name: schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY schema_migrations
@@ -525,7 +473,7 @@ ALTER TABLE ONLY schema_migrations
 
 
 --
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY users
@@ -533,133 +481,126 @@ ALTER TABLE ONLY users
 
 
 --
--- Name: index_favorite_recipes_on_recipe_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_favorite_recipes_on_recipe_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_favorite_recipes_on_recipe_id ON favorite_recipes USING btree (recipe_id);
 
 
 --
--- Name: index_favorite_recipes_on_user_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_favorite_recipes_on_user_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_favorite_recipes_on_user_id ON favorite_recipes USING btree (user_id);
 
 
 --
--- Name: index_friendly_id_slugs_on_slug_and_sluggable_type; Type: INDEX; Schema: public; Owner: -
+-- Name: index_friendly_id_slugs_on_slug_and_sluggable_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_friendly_id_slugs_on_slug_and_sluggable_type ON friendly_id_slugs USING btree (slug, sluggable_type);
 
 
 --
--- Name: index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope; Type: INDEX; Schema: public; Owner: -
+-- Name: index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope ON friendly_id_slugs USING btree (slug, sluggable_type, scope);
 
 
 --
--- Name: index_friendly_id_slugs_on_sluggable_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_friendly_id_slugs_on_sluggable_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_friendly_id_slugs_on_sluggable_id ON friendly_id_slugs USING btree (sluggable_id);
 
 
 --
--- Name: index_friendly_id_slugs_on_sluggable_type; Type: INDEX; Schema: public; Owner: -
+-- Name: index_friendly_id_slugs_on_sluggable_type; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_friendly_id_slugs_on_sluggable_type ON friendly_id_slugs USING btree (sluggable_type);
 
 
 --
--- Name: index_ingredients_on_ingredient_category_id_and_created_at; Type: INDEX; Schema: public; Owner: -
+-- Name: index_ingredients_on_ingredient_category_id_and_created_at; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_ingredients_on_ingredient_category_id_and_created_at ON ingredients USING btree (ingredient_category_id, created_at);
 
 
 --
--- Name: index_ingredients_recipes_on_ingredient_id_and_recipe_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_ingredients_recipes_on_ingredient_id_and_recipe_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_ingredients_recipes_on_ingredient_id_and_recipe_id ON ingredients_recipes USING btree (ingredient_id, recipe_id);
 
 
 --
--- Name: index_ingredients_recipes_on_recipe_id_and_ingredient_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_ingredients_recipes_on_recipe_id_and_ingredient_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_ingredients_recipes_on_recipe_id_and_ingredient_id ON ingredients_recipes USING btree (recipe_id, ingredient_id);
 
 
 --
--- Name: index_recipe_ingredients_on_ingredient_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_recipe_ingredients_on_ingredient_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_recipe_ingredients_on_ingredient_id ON recipe_ingredients USING btree (ingredient_id);
 
 
 --
--- Name: index_recipe_ingredients_on_recipe_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_recipe_ingredients_on_recipe_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_recipe_ingredients_on_recipe_id ON recipe_ingredients USING btree (recipe_id);
 
 
 --
--- Name: index_recipes_on_recipe_category_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_recipes_on_recipe_category_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX index_recipes_on_recipe_category_id ON recipes USING btree (recipe_category_id);
 
 
 --
--- Name: index_roles_on_title; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_roles_on_title ON roles USING btree (title);
-
-
---
--- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
+-- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
 
 
 --
--- Name: index_users_on_rid; Type: INDEX; Schema: public; Owner: -
+-- Name: index_users_on_rid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX index_users_on_rid ON users USING btree (rid);
 
 
 --
--- Name: index_users_on_role_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_users_on_role_id ON users USING btree (role_id);
-
-
---
--- Name: index_users_on_slug; Type: INDEX; Schema: public; Owner: -
+-- Name: index_users_on_slug; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX index_users_on_slug ON users USING btree (slug);
 
 
 --
--- Name: recipes_content; Type: INDEX; Schema: public; Owner: -
+-- Name: index_users_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_users_on_status ON users USING btree (status);
+
+
+--
+-- Name: recipes_content; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX recipes_content ON recipes USING gin (to_tsvector('english'::regconfig, content));
 
 
 --
--- Name: recipes_name; Type: INDEX; Schema: public; Owner: -
+-- Name: recipes_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE INDEX recipes_name ON recipes USING gin (to_tsvector('english'::regconfig, (name)::text));
@@ -669,7 +610,7 @@ CREATE INDEX recipes_name ON recipes USING gin (to_tsvector('english'::regconfig
 -- PostgreSQL database dump complete
 --
 
-SET search_path TO "$user", public;
+SET search_path TO "$user",public;
 
 INSERT INTO "schema_migrations" (version) VALUES
 ('20170212133004'),
@@ -688,8 +629,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20170304204631'),
 ('20170306195818'),
 ('20170306201622'),
+('20170312122443'),
 ('20170315121656'),
 ('20170323102236'),
-('20170323111527');
+('20170323111527'),
+('20170404142938'),
+('20170404152439');
 
 
