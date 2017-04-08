@@ -165,9 +165,9 @@ CREATE TABLE ingredients (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     calories integer,
-    protein double precision,
-    fat double precision,
-    carbohydrate double precision
+    protein integer,
+    fat integer,
+    carbohydrate integer
 );
 
 
@@ -272,8 +272,10 @@ CREATE TABLE recipes (
     content text,
     recipe_category_id integer,
     cooking_time character varying,
-    number_of_ingredients character varying,
-    ccal character varying,
+    calories integer,
+    protein integer,
+    fat integer,
+    carbohydrate integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -629,7 +631,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20170304204631'),
 ('20170306195818'),
 ('20170306201622'),
-('20170312122443'),
 ('20170315121656'),
 ('20170323102236'),
 ('20170323111527'),

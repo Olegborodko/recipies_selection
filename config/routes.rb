@@ -2,7 +2,7 @@ Rails.application.routes.draw do
 
   require 'sidekiq/web'
   require 'sidekiq/cron/web'
-  mount Sidekiq::Web => '/sidekiq', constraints: ApplicationController.new
+  mount Sidekiq::Web => '/sidekiq'#, constraints: ApplicationController.new
 
   get 'index' => 'users#index', :defaults => { :format => 'json' }
 

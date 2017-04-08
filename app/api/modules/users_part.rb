@@ -4,8 +4,6 @@ module Modules
     prefix 'api'
     format :json
 
-    require 'mandrill'
-
     helpers do
       include SessionHelper
       include UserHelpers
@@ -20,16 +18,14 @@ module Modules
       failure: [{ code: 406, message: 'Parameters contain errors' }]
       }
       params do
-        requires :user, type: Hash do
-          requires :email, allow_blank: false, regexp: /.+@.+/, desc: 'users email'
-          requires :name, type: String, desc: 'users name'
-          requires :password, type: String, desc: 'users password'
-          requires :password_confirmation, type: String, desc: 'users password confirmation'
-          optional :description, type: String, desc: 'users description'
-        end
+        requires :email, allow_blank: false, regexp: /.+@.+/, desc: 'users email'
+        requires :name, type: String, desc: 'users name'
+        requires :password, type: String, desc: 'users password'
+        requires :password_confirmation, type: String, desc: 'users password confirmation'
+        optional :description, type: String, desc: 'users description'
       end
       post do
-        user = User.new( declared(params, include_missing: false)[:user] )
+        user = User.new(declared(params, include_missing: false).to_hash)
         if user.save
           present user, with: Entities::UserCreate, message: 'Please use token in 24 hours, else user will delete', token: token_encode(user.rid)
         else
@@ -155,35 +151,26 @@ module Modules
       ###POST /api/users/mandrill
       desc 'Mandrill newsletter', {
       is_array: true,
-      success: { message: 'letters sent' },
-      failure: [{ code: 406, message: 'mandrill error' }]
+      success: { message: 'letters sent or template name not correct, please see (log/mandrill.log)' },
+      failure: [{ code: 406, message: 'not authorized' }]
       }
       params do
+        requires :admin_token, type: String, desc: 'admins token'
         requires :template_name, type: String, desc: 'template name (example - eat_template)'
         requires :template_content, type: String, desc: 'template content'
       end
       post :mandrill do
-        begin
-          mandrill = Mandrill::API.new 'hPGuymrhVBdrs9PqbOzYNg'
-          template_name = declared(params)[:template_name]
-          template_content = [{"name": "footer", "content": declared(params)[:template_content]}]
-          message = {
-            :subject => "Favorite recipes",
-            :from_name => "user admin@year-week.date",
-            :from_email => "admin@year-week.date",
-            :to => User.all.as_json(only: [:name, :email]),
-            :preserve_recipients => false,
-          }
-          async = false
-          sending = mandrill.messages.send_template template_name, template_content, message, async
-          { message: sending }
-        rescue Mandrill::Error => e
+        all_params = declared(params, include_missing: false).to_hash
+        user = get_user_from_token(all_params['admin_token'])
+        if user
+          if user.admin?
+            MandrillJob.perform_later(all_params['template_name'], all_params['template_content'])
+          end
+        else
           status 406
-          { message: "A mandrill error occurred: #{e.class} - #{e.message}" }
-          #raise
+          { error: 'not authorized' }
         end
       end
-
 
     end
   end
