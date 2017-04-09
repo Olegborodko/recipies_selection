@@ -4,44 +4,58 @@ module Modules
     format :json
 
     resource :categories_of_recipes do
-      desc 'All categories'
 
-      #/api/categories_of_recipes
+      desc 'All categories'
       get do
         categories_of_recipes = RecipeCategory.all
         present categories_of_recipes, with: Api::Entities::CategoryOfRecipes
       end
 
       desc 'Current category'
-      #/api/categories_of_recipes/id
-      get ':id' do
-        {category_of_recipes_id: params[:id]}
-      end
-
-      #/api/categories_of_recipes
       params do
-        requires :category_of_recipes, type: Hash do
-          requires :title, type: String
-        end
+        requires :id, type: Integer
       end
-
-      desc 'Create new category'
-      post do
-        category_of_recipes = RecipeCategory.new(
-            declared(params, include_missing: false)[:category_of_recipes])
-        category_of_recipes.save
+      get ':id' do
+        category_of_recipes = RecipeCategory.find(params[:id])
         present category_of_recipes, with: Api::Entities::CategoryOfRecipes
       end
 
+      desc 'Create new category'
+      params do
+        requires :title, type: String
+      end
+      post do
+        category_of_recipes = RecipeCategory.new(
+            declared(params, include_missing: false).to_h)
+        if category_of_recipes.save
+          present category_of_recipes, with: Api::Entities::CategoryOfRecipes
+          {status: :success}
+        else
+          error!(status: :error, message: category_of_recipes.errors.full_messages.first) if category_of_recipes.errors.any?
+        end
+      end
+
       desc 'Update category'
+      params do
+        requires :id, type: Integer
+        requires :title, type: String
+      end
       put ':id' do
-        RecipeCategory.find(params[:id])
-            .update({title: params[:category_of_recipes]})
+        category_of_recipes = RecipeCategory.find(params[:id])
+        if category_of_recipes.update(declared(params, include_missing: false).to_h)
+          present category_of_recipes, with: Api::Entities::CategoryOfRecipes
+          {status: :success}
+        else
+          error!(status: :error, message: category_of_recipes.errors.full_messages.first) if category_of_recipes.errors.any?
+        end
       end
 
       desc 'Delete category'
+      params do
+        requires :id, type: Integer
+      end
       delete ':id' do
-        RecipeCategory.find(params[:id]).destroy
+        {status: :success} if RecipeCategory.find(params[:id]).destroy
       end
     end
   end

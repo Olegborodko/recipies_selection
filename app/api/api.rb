@@ -3,6 +3,10 @@ class Api < Grape::API
   # version 'v1'
   format :json
 
+  rescue_from ActiveRecord::RecordNotFound do |_exception|
+    error!({status: :error, message: :not_found}, 404)
+  end
+
   mount Modules::UsersPart
   mount Modules::CategoriesOfIngredients
   mount Modules::CategoriesOfRecipes
