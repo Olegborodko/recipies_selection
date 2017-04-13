@@ -39,7 +39,7 @@ module Modules
       is_array: false,
       success: { massage: 'authorized' },
       failure: [{ code: 401, message: 'Invalid key' },
-                { code: 406, message: 'Error time audentification' }]
+                { code: 406, message: 'Error time authentification' }]
       }
       params do
         requires :user_token, desc: 'users token'
@@ -48,14 +48,14 @@ module Modules
         user = get_user_from_token(declared(params, include_missing: false)[:user_token])
         if user
           time_now = Time.now
-          if user.created_at + User.time_for_audentification > time_now
+          if user.created_at + User.time_for_authentification > time_now
             user.status = "subscriber"
             user.save(validate: false)
             return { messages: 'authorized' }
           else
             user.destroy
             status 406
-            return { error: 'error time audentification' }
+            return { error: 'error time authentification' }
           end
         end
         status 401
@@ -146,30 +146,6 @@ module Modules
         end
         status 406
         { error: 'Invalid name or email' }
-      end
-
-      ###POST /api/users/mandrill
-      desc 'Mandrill newsletter', {
-      is_array: true,
-      success: { message: 'letters sent or template name not correct, please see (log/mandrill.log)' },
-      failure: [{ code: 406, message: 'not authorized' }]
-      }
-      params do
-        requires :admin_token, type: String, desc: 'admins token'
-        requires :template_name, type: String, desc: 'template name (example - eat_template)'
-        requires :template_content, type: String, desc: 'template content'
-      end
-      post :mandrill do
-        all_params = declared(params, include_missing: false).to_hash
-        user = get_user_from_token(all_params['admin_token'])
-        if user
-          if user.admin?
-            MandrillJob.perform_later(all_params['template_name'], all_params['template_content'])
-          end
-        else
-          status 406
-          { error: 'not authorized' }
-        end
       end
 
     end

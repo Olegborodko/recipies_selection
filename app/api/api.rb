@@ -8,6 +8,7 @@ class Api < Grape::API
   end
 
   mount Modules::UsersPart
+  mount Modules::Admin
   mount Modules::CategoriesOfIngredients
   mount Modules::CategoriesOfRecipes
   mount Modules::Components

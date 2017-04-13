@@ -26,7 +26,7 @@ class User < ApplicationRecord
     end
   end
 
-  def self.time_for_audentification
+  def self.time_for_authentification
     86400 #60 * 60 * 24  = 1day
   end
 
