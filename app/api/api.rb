@@ -13,6 +13,6 @@ class Api < Grape::API
   mount Modules::Components
   mount Modules::Receipts
 
-  add_swagger_documentation :add_version => true,
-                            :base_path => '/'
+  add_swagger_documentation add_version: true,
+                            base_path: '/'
 end

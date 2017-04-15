@@ -28,6 +28,7 @@ module Modules
       end
       get ':id' do
         receipt = set_category.recipes.find(params[:id])
+        # ingredients = receipt.ingredients
         present receipt, with: Api::Entities::Receipt
       end
 
@@ -41,12 +42,17 @@ module Modules
         requires :protein, type: Integer
         requires :fat, type: Integer
         requires :carbohydrate, type: Integer
-        # requires :components, type Hash do
-        #   requires
+        # requires :ingredients, type: Hash do
+        #   requires :id, type: Integer, desc: "ingredient ID"
         # end
       end
       post do
         receipt = set_category.recipes.create(declared(params, include_missing: false).to_hash)
+        # ingr = Ingredient.find(params[:id])
+        # receipt.ingredients << ingr
+        # ri = receipt.recipe_ingredients.find(params)
+        # ri.number_of_ingredient =
+        # ri.save!
         if receipt.save
           present receipt, with: Api::Entities::Receipt
           {status: :success}
