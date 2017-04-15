@@ -56,6 +56,27 @@ module Modules
         { error: 'not authorized' }
       end
 
+      ###GET /api/admin/user_all/
+      desc 'All users', {
+      is_array: true,
+      success: { message: 'success' },
+      failure: [{ code: 406, message: 'not authorized' }]
+      }
+      params do
+        requires :admin_token, type: String, desc: 'admins token'
+      end
+      get 'user_all' do
+        all_params = declared(params, include_missing: false).to_hash
+        user = get_user_from_token(all_params['admin_token'])
+        if user
+          if user.admin?
+            return present User.all, with: Entities::UserInfo
+          end
+        end
+        status 406
+        { error: 'not authorized' }
+      end
+
     end
   end
 end
