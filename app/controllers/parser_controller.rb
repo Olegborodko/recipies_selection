@@ -89,20 +89,19 @@ class ParserController < ApplicationController
 
         @recipe_ingr = @recipe_url.css('#ingresList > li > a')
         numb_of_ingr = 0
+
         @recipe_ingr.each_with_object({}) do |component, url|
           url[component.text.strip] = component['href']
           name = component.text.strip
           link = component[:href]
           ingr = Ingredient.find_by_href(component[:href])
+
           if ingr.nil?
             @ingredient_url = Nokogiri::HTML(open(component[:href]))
             iu = @ingredient_url.css('#topContributors > li strong')
-            # iu = Nokogiri::HTML(open(component[:href]))
             check_existing_category = IngredientCategory.find_or_create_by(title: 'Другие')
-
             @ingredient = create_other_ingredient(check_existing_category, iu, link, name)
             @recipe.ingredients << @ingredient
-            # @ingredient.save!
           elsif link == ingr.href
             @recipe.ingredients << ingr
           end
@@ -142,16 +141,4 @@ class ParserController < ApplicationController
   def create_ingredient(check_existing_category, name, iu, link)
     create_other_ingredient(check_existing_category, iu, link, name)
   end
-
-    # def create_other_ingredient(check_existing_category, name.text.strip, iu, name[:href])
-    #   # check_existing_category.ingredients.find_or_create_by(
-    #   #   name: name.text.strip,
-    #   #   href: name[:href],
-    #   #   content: @ingredient_url.css('#stages > p').text.strip,
-    #   #   calories: iu[0].text.strip,
-    #   #   protein: iu[1].text.strip,
-    #   #   fat: iu[2].text.strip,
-    #   #   carbohydrate: iu[3].text.strip
-    #   # )
-    # end
 end
