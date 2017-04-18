@@ -30,7 +30,6 @@ Rails.application.routes.draw do
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
-  get 'parser' => 'parser#index'
   # resources :ingredient_categories do
   #   resources :ingredients
   # end
@@ -38,6 +37,7 @@ Rails.application.routes.draw do
   #get '/:locale' => 'users#index'
   scope "(:locale)", locale: /en|ru/ do
     root 'users#index'
+    get 'parser' => 'parser#index', constraints: ApplicationController.new
   end
 
 end

@@ -3,9 +3,8 @@ class CronUserDeleteJob < ApplicationJob
 
   def perform(*args)
 
-    time_now = Time.now
-    User.where(role_id: 1).find_each do |user|
-      if user.created_at + ENV['time_for_audentification'].to_i < time_now
+    User.where(status: 'unauthorized').find_each do |user|
+      if user.created_at + User.time_for_authentification < Time.now
         user.destroy
       end
     end

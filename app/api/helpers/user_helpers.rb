@@ -11,5 +11,8 @@ module UserHelpers
     end
   end
 
+  def all_params_hash
+    declared(params, include_missing: false).to_hash
+  end
 
 end
