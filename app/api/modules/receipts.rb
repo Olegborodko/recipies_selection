@@ -4,12 +4,15 @@ module Modules
     format :json
 
     desc 'Receipt controller'
-    # namespace 'categories_of_recipes/:category_of_recipes_id' do
     resource :recipes do
 
       helpers do
-        def set_category
+        def set_rec_category
           RecipeCategory.find(params[:recipe_category_id])
+        end
+
+        def set_ing_category
+          IngredientCategory.find(params[:ingredient_category_id])
         end
       end
 
@@ -18,7 +21,7 @@ module Modules
         requires :recipe_category_id, type: Integer
       end
       get do
-        receipts = set_category.recipes
+        receipts = set_rec_category.recipes
         present receipts, with: Api::Entities::Receipt
       end
 
@@ -27,8 +30,7 @@ module Modules
         requires :recipe_category_id, type: Integer
       end
       get ':id' do
-        receipt = set_category.recipes.find(params[:id])
-        # ingredients = receipt.ingredients
+        receipt = set_rec_category.recipes.find(params[:id])
         present receipt, with: Api::Entities::Receipt
       end
 
@@ -42,20 +44,21 @@ module Modules
         requires :protein, type: Integer
         requires :fat, type: Integer
         requires :carbohydrate, type: Integer
-        # requires :ingredients, type: Hash do
-        #   requires :id, type: Integer, desc: "ingredient ID"
-        # end
+        requires :ingredients, type: Hash do
+          requires :ingredient, type: String
+          requires :number_of_ingredient, type: String
+        end
       end
       post do
-        receipt = set_category.recipes.create(declared(params, include_missing: false).to_hash)
-        # ingr = Ingredient.find(params[:id])
-        # receipt.ingredients << ingr
-        # ri = receipt.recipe_ingredients.find(params)
-        # ri.number_of_ingredient =
-        # ri.save!
+        ingredient = set_rec_category.ingredients.find(params[:ingredient])
+        receipt = set_rec_category.recipes.create(declared(params, include_missing: false).to_hash)
+        receipt.ingredients << ingredient
+        ri = receipt.recipe_ingredients[ingredient]
+        ri.number_of_ingredient = params[:number_of_ingredient]
+        ri.save!
         if receipt.save
           present receipt, with: Api::Entities::Receipt
-          {status: :success}
+          { status: :success }
         else
           error!(status: :error, message: receipt.errors.full_messages.first) if receipt.errors.any?
         end
@@ -73,10 +76,10 @@ module Modules
         optional :carbohydrate, type: Integer
       end
       put ':id' do
-        receipt = set_category.recipes.find(params[:id])
+        receipt = set_rec_category.recipes.find(params[:id])
         if receipt.update(declared(params, include_missing: false).to_hash)
           present receipt, with: Api::Entities::Receipt
-          {status: :success}
+          { status: :success }
         else
           error!(status: :error, message: receipt.errors.full_messages.first) if receipt.errors.any?
         end
@@ -88,7 +91,7 @@ module Modules
       end
       delete ':id' do
         receipt = Recipe.find(params[:id])
-        {status: :success} if receipt.delete
+        { status: :success } if receipt.delete
       end
       # end
     end

@@ -7,8 +7,7 @@ class ParserController < ApplicationController
 
     @ingredient_category_links = @ingredient_category_url
                                      .css('div#aside.clearfix div.asideBlock ul.rubricator.lastrub li a[href]')
-    ingr_cat_links = @ingredient_category_links.each_with_object({}) do
-    |n, h|
+    ingr_cat_links = @ingredient_category_links.each_with_object({}) do |n, h|
       h[n.text.strip] = n['href']
     end
 
@@ -86,7 +85,6 @@ class ParserController < ApplicationController
         next unless check_existing_recipe.nil?
         @recipe_url = Nokogiri::HTML(open(href))
         @recipe = create_recipe(check_recipe_category, recipe_name)
-
         @recipe_ingr = @recipe_url.css('#ingresList > li > a')
         numb_of_ingr = 0
 

@@ -161,14 +161,14 @@ ALTER SEQUENCE ingredient_categories_id_seq OWNED BY ingredient_categories.id;
 --
 
 CREATE TABLE ingredients (
-  id                     integer NOT NULL,
-  name                   character varying,
-  content                text,
-  href                   character varying,
-  ingredient_category_id integer,
-  created_at             timestamp without time zone NOT NULL,
-  updated_at             timestamp without time zone NOT NULL,
-  calories               integer,
+  id                     INTEGER                     NOT NULL,
+  name                   CHARACTER VARYING,
+  content                TEXT,
+  href                   CHARACTER VARYING,
+  ingredient_category_id INTEGER,
+  created_at             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  updated_at             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  calories               INTEGER,
   protein                INTEGER,
   fat                    INTEGER,
   carbohydrate           INTEGER
@@ -271,17 +271,17 @@ ALTER SEQUENCE recipe_ingredients_id_seq OWNED BY recipe_ingredients.id;
 --
 
 CREATE TABLE recipes (
-  id                 integer NOT NULL,
-  name               character varying,
-  content            text,
-  recipe_category_id integer,
-  cooking_time       character varying,
+  id                 INTEGER                     NOT NULL,
+  name               CHARACTER VARYING,
+  content            TEXT,
+  recipe_category_id INTEGER,
+  cooking_time       CHARACTER VARYING,
   calories           INTEGER,
   protein            INTEGER,
   fat                INTEGER,
   carbohydrate       INTEGER,
-  created_at         timestamp without time zone NOT NULL,
-  updated_at         timestamp without time zone NOT NULL
+  created_at         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+  updated_at         TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
 
@@ -602,14 +602,16 @@ CREATE INDEX index_users_on_status ON users USING btree (status);
 -- Name: recipes_content; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX recipes_content ON recipes USING gin (to_tsvector('english'::regconfig, content));
+CREATE INDEX recipes_content
+  ON recipes USING GIN (to_tsvector('russian' :: REGCONFIG, content));
 
 
 --
 -- Name: recipes_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX recipes_name ON recipes USING gin (to_tsvector('english'::regconfig, (name)::text));
+CREATE INDEX recipes_name
+  ON recipes USING GIN (to_tsvector('russian' :: REGCONFIG, (name) :: TEXT));
 
 
 --
