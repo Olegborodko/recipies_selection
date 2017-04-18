@@ -23,9 +23,8 @@ module Modules
         optional :notes, type: String, desc: 'notes'
       end
       post do
-        all_params = declared(params, include_missing: false).to_hash
-        user = get_user_from_token(all_params['user_token'])
-        recipe = Recipe.find_by id: all_params['recipe_id']
+        user = get_user_from_token(all_params_hash['user_token'])
+        recipe = Recipe.find_by id: all_params_hash['recipe_id']
 
         if user && recipe
           fr = FavoriteRecipe.find_by user: user, recipe: recipe
@@ -37,7 +36,7 @@ module Modules
           f = FavoriteRecipe.new
           f.user = user
           f.recipe = recipe
-          f.note = all_params['notes']
+          f.note = all_params_hash['notes']
           return { message: 'success' } if f.save
         end
         status 406
@@ -54,8 +53,7 @@ module Modules
         requires :user_token, type: String, desc: 'users token'
       end
       get ':user_token' do
-        all_params = declared(params, include_missing: false).to_hash
-        user = get_user_from_token(all_params['user_token'])
+        user = get_user_from_token(all_params_hash['user_token'])
         if user
           #FavoriteRecipe.where(user: user).find_each do |recipe|
           #  present recipe, with: Entities::FavoriteRecipeEntities
@@ -81,10 +79,9 @@ module Modules
         requires :favorite_recipe_id, type: String, desc: 'favorite recipe id'
       end
       delete ':favorite_recipe_id' do
-        all_params = declared(params, include_missing: false).to_hash
-        user = get_user_from_token(all_params['user_token'])
+        user = get_user_from_token(all_params_hash['user_token'])
         if user
-          fr = FavoriteRecipe.find_by user: user, recipe_id: all_params['favorite_recipe_id'].to_i
+          fr = FavoriteRecipe.find_by user: user, recipe_id: all_params_hash['favorite_recipe_id'].to_i
           if fr
             FavoriteRecipe.destroy(fr)
             { message: 'success' }

@@ -25,8 +25,10 @@ module Modules
         optional :description, type: String, desc: 'users description'
       end
       post do
-        user = User.new(declared(params, include_missing: false).to_hash)
+        user = User.new(all_params_hash)
         if user.save
+          path = token_encode(user.rid)
+          EmailUserCreateJob.perform_later(user.email, path)
           present user, with: Entities::UserCreate, message: 'Please use token in 24 hours, else user will delete', token: token_encode(user.rid)
         else
           status 406
@@ -45,10 +47,9 @@ module Modules
         requires :user_token, desc: 'users token'
       end
       get 'verification/:user_token' do
-        user = get_user_from_token(declared(params, include_missing: false)[:user_token])
+        user = get_user_from_token(all_params_hash['user_token'])
         if user
-          time_now = Time.now
-          if user.created_at + User.time_for_authentification > time_now
+          if user.created_at + User.time_for_authentification > Time.now
             user.status = "subscriber"
             user.save(validate: false)
             return { messages: 'authorized' }
@@ -73,7 +74,7 @@ module Modules
         requires :password, type: String, desc: 'users password'
       end
       post :login do
-        user = api_helper_authentication(declared(params)[:email], declared(params)[:password])
+        user = api_helper_authentication(all_params_hash['email'],all_params_hash['password'])
         if user
           { token: token_encode(user.rid), message: 'login success' }
         else
@@ -85,7 +86,7 @@ module Modules
       ##PATCH /api/users/:user_token
       desc 'User update', {
       is_array: true,
-      success: Entities::UserUpdate,
+      success: Entities::UserBase,
       failure: [{ code: 406, message: 'Invalid parameter entry' }]
       }
       params do
@@ -93,11 +94,10 @@ module Modules
         requires :description, type: String, desc: 'users description'
       end
       patch do
-        all_params = declared(params, include_missing: false).to_hash
-        user = get_user_from_token(all_params['user_token'])
+        user = get_user_from_token(all_params_hash['user_token'])
         if user
-          user.update_attribute(:description, all_params['description'])
-          present user, with: Entities::UserUpdate
+          user.update_attribute(:description, all_params_hash['description'])
+          present user, with: Entities::UserBase
         else
           status 406
           { error: 'Invalid users token' }
@@ -107,16 +107,16 @@ module Modules
       ###GET /api/users/:user_token
       desc 'User information', {
       is_array: true,
-      success: Entities::UserInfo,
+      success: Entities::UserBase,
       failure: [{ code: 406, message: 'Invalid users token' }]
       }
       params do
         requires :user_token, type: String, desc: 'users token'
       end
       get do
-        user = get_user_from_token(declared(params, include_missing: false)[:user_token])
+        user = get_user_from_token(all_params_hash['user_token'])
         if user
-          present user, with: Entities::UserInfo
+          present user, with: Entities::UserBase
         else
           status 406
           { error: 'Invalid users token' }
@@ -130,22 +130,20 @@ module Modules
       failure: [{ code: 406, message: 'Invalid users token, name or email' }]
       }
       params do
-        requires :user_token, type: String, desc: 'users token'
         requires :name, type: String, desc: 'users name'
         requires :email, type: String, desc: 'users email'
       end
       post :restore_password do
-        all_params = declared(params, include_missing: false).to_hash
-        user = get_user_from_token(all_params['user_token'])
+        user = User.find_by email: all_params_hash['email'], name: all_params_hash['name']
         if user
-          if user.name == all_params['name'] && user.email == all_params['email']
-            p_new = password_generate
-            user.update_attribute(:password, p_new)
-            return { message: 'success', password: p_new }
-          end
+          p_new = password_generate
+          user.update_attribute(:password, p_new)
+          EmailSendJob.perform_later(user.email, p_new)
+          { message: 'success', password: p_new }
+        else
+          status 406
+          { error: 'Invalid name or email' }
         end
-        status 406
-        { error: 'Invalid name or email' }
       end
 
     end

@@ -13,7 +13,7 @@ class UsersController < ApplicationController
       user = User.new(person_params)
 
       if user.save
-        path = verification_url(token_encode(user.rid))
+        path = token_encode(user.rid)
         EmailUserCreateJob.perform_later(user.email, path)
         #UserMailer.create(user.email, user.rid).deliver_now
 

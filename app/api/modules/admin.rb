@@ -23,11 +23,10 @@ module Modules
         requires :template_content, type: String, desc: 'template content'
       end
       post :mandrill do
-        all_params = declared(params, include_missing: false).to_hash
-        user = get_user_from_token(all_params['admin_token'])
+        user = get_user_from_token(all_params_hash['admin_token'])
         if user
           if user.admin?
-            MandrillJob.perform_later(all_params['template_name'], all_params['template_content'])
+            MandrillJob.perform_later(all_params_hash['template_name'], all_params_hash['template_content'])
             return { message: 'letters sent' }
           end
         end
@@ -45,7 +44,7 @@ module Modules
         requires :admin_token, type: String, desc: 'admins token'
       end
       post :parser do
-        user = get_user_from_token(declared(params)[:admin_token])
+        user = get_user_from_token(all_params_hash['admin_token'])
         if user
           if user.admin?
             ParserJob.perform_later
@@ -66,8 +65,7 @@ module Modules
         requires :admin_token, type: String, desc: 'admins token'
       end
       get 'user_all' do
-        all_params = declared(params, include_missing: false).to_hash
-        user = get_user_from_token(all_params['admin_token'])
+        user = get_user_from_token(all_params_hash['admin_token'])
         if user
           if user.admin?
             return present User.all, with: Entities::UserInfo
