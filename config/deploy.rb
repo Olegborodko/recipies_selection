@@ -13,6 +13,8 @@ set :deploy_to, "/root/#{fetch(:application)}"
 append :linked_files, "config/database.yml", "config/secrets.yml"
 append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets"
 
+# set :sidekiq_monit_conf_dir, "/root"
+
 set :nginx_config_name, "#{fetch(:application)}"
 set :nginx_server_name, "#{fetch(:application)}"
 

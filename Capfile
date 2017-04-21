@@ -38,6 +38,9 @@ require "capistrano/rails"
 require "capistrano/bundler"
 require "capistrano/puma"
 require "capistrano/puma/nginx"
+require "capistrano/rails/console"
+require "capistrano/sidekiq"
+# require "capistrano/sidekiq/monit"
 
 install_plugin Capistrano::Puma
 install_plugin Capistrano::Puma::Nginx  # if you want to upload a nginx site template

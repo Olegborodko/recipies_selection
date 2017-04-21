@@ -8,6 +8,14 @@ GIT
       puma (~> 3.4)
 
 GIT
+  remote: https://github.com/seuros/capistrano-sidekiq.git
+  revision: 339c42e24f42d8d72173daae832b23504930f941
+  specs:
+    capistrano-sidekiq (0.10.0)
+      capistrano
+      sidekiq (>= 3.4)
+
+GIT
   remote: https://github.com/sinatra/sinatra.git
   revision: 3b4fc7dfe08f9bed5ad0f74f4febc144aabd2315
   specs:
@@ -84,6 +92,9 @@ GEM
     capistrano-rails (1.2.3)
       capistrano (~> 3.1)
       capistrano-bundler (~> 1.1)
+    capistrano-rails-console (2.2.0)
+      capistrano (>= 3.5.0, < 4.0.0)
+      sshkit-interactive (~> 0.2.0)
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
@@ -195,6 +206,7 @@ GEM
     rack (2.0.1)
     rack-accept (0.4.5)
       rack (>= 0.4)
+    rack-cors (0.4.1)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.0.2)
@@ -278,6 +290,8 @@ GEM
     sshkit (1.13.0)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
+    sshkit-interactive (0.2.0)
+      sshkit (~> 1.9)
     thor (0.19.4)
     thread_safe (0.3.6)
     tilt (2.0.7)
@@ -313,7 +327,9 @@ DEPENDENCIES
   byebug
   capistrano
   capistrano-rails
+  capistrano-rails-console
   capistrano-rvm
+  capistrano-sidekiq!
   capistrano3-puma!
   coffee-rails
   email_spec
@@ -334,6 +350,7 @@ DEPENDENCIES
   pg
   pg_search
   puma
+  rack-cors
   rails
   rspec-rails
   sass-rails
