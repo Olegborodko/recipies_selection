@@ -44,18 +44,31 @@ module Modules
         requires :protein, type: Integer
         requires :fat, type: Integer
         requires :carbohydrate, type: Integer
-        requires :ingredients, type: Hash do
-          requires :ingredient, type: String
-          requires :number_of_ingredient, type: String
-        end
+        requires :ingredient_category_id, type: Integer
+        requires :ingredient_id, type: Integer
+        requires :number_of_ingredient, type: String
       end
       post do
-        ingredient = set_rec_category.ingredients.find(params[:ingredient])
-        receipt = set_rec_category.recipes.create(declared(params, include_missing: false).to_hash)
+        ingredient = set_ing_category.ingredients.find(params[:ingredient_id])
+        # receipt = set_rec_category.recipes.create(declared(params, include_missing: false).to_hash)
+        receipt = set_rec_category.recipes.find_or_create_by({
+                                                                 recipe_category_id: params[:recipe_category_id],
+                                                                 name: params[:name],
+                                                                 content: params[:content],
+                                                                 cooking_time: params[:cooking_time],
+                                                                 calories: params[:calories],
+                                                                 protein: params[:protein],
+                                                                 fat: params[:fat],
+                                                                 carbohydrate: params[:carbohydrate] })
+
         receipt.ingredients << ingredient
-        ri = receipt.recipe_ingredients[ingredient]
-        ri.number_of_ingredient = params[:number_of_ingredient]
-        ri.save!
+        ri_all = receipt.recipe_ingredients
+        ri_all.each_with_object({}) do |ri, obj|
+          obj[ri.ingredient.name] = ri.number_of_ingredient
+          ri.number_of_ingredient = params[:number_of_ingredient]
+          ri.save!
+        end
+
         if receipt.save
           present receipt, with: Api::Entities::Receipt
           { status: :success }
@@ -74,10 +87,28 @@ module Modules
         optional :protein, type: Integer
         optional :fat, type: Integer
         optional :carbohydrate, type: Integer
+        optional :ingredient_category_id, type: Integer
+        optional :ingredient_id, type: Integer
+        optional :number_of_ingredient, type: String
       end
       put ':id' do
         receipt = set_rec_category.recipes.find(params[:id])
-        if receipt.update(declared(params, include_missing: false).to_hash)
+        if receipt.update(
+            recipe_category_id: params[:recipe_category_id],
+            name: params[:name],
+            content: params[:content],
+            cooking_time: params[:cooking_time],
+            calories: params[:calories],
+            protein: params[:protein],
+            fat: params[:fat],
+            carbohydrate: params[:carbohydrate])
+
+          ri_all = receipt.recipe_ingredients
+          ri_all.each_with_object({}) do |ri, obj|
+            obj[ri.ingredient.name] = ri.number_of_ingredient
+            ri.number_of_ingredient = params[:number_of_ingredient]
+            ri.save!
+          end
           present receipt, with: Api::Entities::Receipt
           { status: :success }
         else
