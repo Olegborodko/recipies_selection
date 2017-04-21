@@ -1,0 +1,33 @@
+ru:
+  hello: "привет"
+  registration: "Регистрация"
+  name: "имя"
+
+  form:
+    name: "имя"
+    email: "почта"
+    password: "пароль"
+    password_confirmation: "повторить пароль"
+    description: "описание"
+    create_user: "Создать пользователя"
+    old_password: "старый пароль"
+    new_password: "новый пароль"
+    new_password_confirmation: "новый пароль подтверждение"
+    update_user_password: "Обновить пароль пользователя"
+
+  language: "Язык"
+  restore_password: "Восстановить пароль"
+  edit: "Редактировать"
+  change_password: "Поменять пароль"
+  change_description: "Изменить описание"
+  update_user_description: "Обновить описание пользователя"
+
+  email_text: "Для продолжения регострации на"
+  site_name: "RecipiesSelection"
+  please_go_to_link: "Пожалуйста перейдите по ссылке"
+  thank_you: "Спасибо"
+
+  sign_in: "Войти"
+  home: "Главная"
+  logout: "Выйти"
+  close: "Закрыть"

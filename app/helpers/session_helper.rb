@@ -8,7 +8,7 @@ module SessionHelper
   def authentication(email, password) #nil or session
     if email && password
       user = User.find_by email: email.downcase
-      if user && user.authenticate(password) && !unauthorized?(user.role_id)
+      if user && user.authenticate(password) && !user.unauthorized?
         session[:user_id] = user.rid
       end
     end
@@ -26,30 +26,26 @@ module SessionHelper
     Base64.strict_encode64(token)
   end
 
-  def token_decode(token)
-
+  def get_user_from_token(token)
     begin
       tok = Base64.strict_decode64(token)
       decoded_token = JWT.decode tok, ENV["token_secret_key"], true, { :algorithm => 'HS256' }
     rescue
-      if block_given?
-        yield
-      else
-        return false
-      end
+      return nil
+    else
+      User.find_by rid: decoded_token[0]['key']
     end
-
-    User.find_by rid: decoded_token[0]['key']
   end
 
-  def unauthorized?(user_role_id)
-    true if user_role_id == 1
+  def password_generate
+    password_func(("a".."z"),5) +
+    password_func(("A".."Z"),5) +
+    password_func((0..9),5)
   end
 
-  def set_subscriber(user)
-    if user.role_id == 1
-      user.update_attribute(:role_id, 2)
-    end
+  def password_func(x, l)
+    o = [x].map(&:to_a).flatten
+    (0...rand(2..l)).map { o[rand(o.length)] }.join
   end
 
 end

@@ -17,3 +17,23 @@
 .underline {
     text-decoration: underline;
 }
+
+#switch {
+    margin-top: 15px;
+    margin-left: 18px;
+    color:#9d9d9d;
+}
+
+#switch a{
+    display: inline;
+    padding:15px 0;
+}
+
+#switch span{
+    color:#9d9d9d;
+    padding-right:15px;
+}
+
+#switch .swi{
+    padding:0 15px;
+}

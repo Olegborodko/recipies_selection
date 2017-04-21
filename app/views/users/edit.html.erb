@@ -1,27 +1,27 @@
-<h1>Edit</h1>
+<h1><%= t("edit") %></h1>
 <%= form_for :user_change, url: {action: "update"}, method: "put", html: {class: "user_form"} do |f| %>
-    <b>Change password</b>
+    <b><%= t("change_password") %></b>
     <div class="form-group">
-      <%= f.password_field :old_password, class: "form-control", placeholder: "old password" %>
+      <%= f.password_field :old_password, class: "form-control", placeholder: t("form.old_password") %>
     </div>
     <div class="form-group">
-      <%= f.password_field :new_password, class: "form-control", placeholder: "new password" %>
+      <%= f.password_field :new_password, class: "form-control", placeholder: t("form.new_password") %>
     </div>
     <div class="form-group">
-      <%= f.password_field :new_password_confirmation, class: "form-control", placeholder: "new password confirmation" %>
+      <%= f.password_field :new_password_confirmation, class: "form-control", placeholder: t("form.new_password_confirmation") %>
     </div>
     <div class="form-group">
-      <%= f.submit "Update User password", class: "btn, btn-default" %>
+      <%= f.submit t("form.update_user_password"), class: "btn, btn-default" %>
     </div>
 <% end %>
 
 
 <%= form_for :user_change, url: {action: "update_description"}, method: "put", html: {class: "user_form"} do |f| %>
-    <b>Change description</b>
+    <b><%= t("change_description") %></b>
     <div class="form-group">
       <%= f.text_area :description, class: "form-control", size: "60x12", value: "#{@current_user.description}" %>
     </div>
     <div class="form-group">
-      <%= f.submit "Update User description", class: "btn, btn-default" %>
+      <%= f.submit t("update_user_description"), class: "btn, btn-default" %>
     </div>
 <% end %>

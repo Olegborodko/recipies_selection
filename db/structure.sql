@@ -160,13 +160,14 @@ CREATE TABLE ingredients (
     id integer NOT NULL,
     name character varying,
     content text,
+    href character varying,
     ingredient_category_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     calories integer,
-    protein double precision,
-    fat double precision,
-    carbohydrate double precision
+    protein integer,
+    fat integer,
+    carbohydrate integer
 );
 
 
@@ -271,8 +272,10 @@ CREATE TABLE recipes (
     content text,
     recipe_category_id integer,
     cooking_time character varying,
-    number_of_ingredients character varying,
-    ccal integer,
+    calories integer,
+    protein integer,
+    fat integer,
+    carbohydrate integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -298,37 +301,6 @@ ALTER SEQUENCE recipes_id_seq OWNED BY recipes.id;
 
 
 --
--- Name: roles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE roles (
-    id integer NOT NULL,
-    title character varying NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE roles_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
-
-
---
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -346,7 +318,7 @@ CREATE TABLE users (
     email character varying NOT NULL,
     password_digest character varying NOT NULL,
     name character varying NOT NULL,
-    role_id integer DEFAULT 1 NOT NULL,
+    status integer DEFAULT 0 NOT NULL,
     description text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -427,13 +399,6 @@ ALTER TABLE ONLY recipes ALTER COLUMN id SET DEFAULT nextval('recipes_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
@@ -499,14 +464,6 @@ ALTER TABLE ONLY recipe_ingredients
 
 ALTER TABLE ONLY recipes
     ADD CONSTRAINT recipes_pkey PRIMARY KEY (id);
-
-
---
--- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY roles
-    ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
 
 
 --
@@ -610,13 +567,6 @@ CREATE INDEX index_recipes_on_recipe_category_id ON recipes USING btree (recipe_
 
 
 --
--- Name: index_roles_on_title; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE UNIQUE INDEX index_roles_on_title ON roles USING btree (title);
-
-
---
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -631,17 +581,17 @@ CREATE UNIQUE INDEX index_users_on_rid ON users USING btree (rid);
 
 
 --
--- Name: index_users_on_role_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_users_on_role_id ON users USING btree (role_id);
-
-
---
 -- Name: index_users_on_slug; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE UNIQUE INDEX index_users_on_slug ON users USING btree (slug);
+
+
+--
+-- Name: index_users_on_status; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_users_on_status ON users USING btree (status);
 
 
 --
@@ -681,9 +631,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20170304204631'),
 ('20170306195818'),
 ('20170306201622'),
-('20170312122443'),
 ('20170315121656'),
 ('20170323102236'),
-('20170323111527');
+('20170323111527'),
+('20170404142938'),
+('20170404152439');
 
 

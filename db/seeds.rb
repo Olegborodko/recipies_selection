@@ -6,13 +6,8 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Role.delete_all
-Role.create(title: "admin", id: 3)
-Role.create(title: "subscriber", id: 2)
-Role.create(title: "unauthorized", id: 1)
-
+FavoriteRecipe.delete_all
 User.delete_all
-User.create(email: "test@test.ua", description: "some some ..", password: "111111", role_id: 1, name: 'david')
-User.create(email: "test2@test.ua", description: "some some ..", password: "111111", role_id: 3, name: 'sasha')
-User.create(email: "test3@test.ua", description: "some some ..", password: "111111", role_id: 1, name: 'david2')
-User.create(email: "test4@test.ua", description: "some some ..", password: "111111", role_id: 1, name: 'david3')
+User.create(email: "test@test.ua", status:"unauthorized", description: "some some ..", password: "Qaz123", name: 'david')
+User.create(email: "test1@test.ua", status:"subscriber", description: "some some ..", password: "Qaz123", name: 'david2')
+User.create(email: "test_admin@test.ua", status:"admin", description: "some some ..", password: "Qaz123", name: 'adm')

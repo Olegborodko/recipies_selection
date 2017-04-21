@@ -13,7 +13,7 @@ class UsersController < ApplicationController
       user = User.new(person_params)
 
       if user.save
-        path = verification_url(token_encode(user.rid))
+        path = token_encode(user.rid)
         EmailUserCreateJob.perform_later(user.email, path)
         #UserMailer.create(user.email, user.rid).deliver_now
 
@@ -29,25 +29,21 @@ class UsersController < ApplicationController
 
   def verification
 
-    user = token_decode(params[:id]) do
-      respond_to do |format|
-        format.html { redirect_to root_url, :notice => "Your authorization is not valid" and return }
-        format.json { render json: {message: "key is invalid"}, status: :unprocessable_entity and return }
-      end
-    end
+    user = get_user_from_token(params[:id])
 
     respond_to do |format|
       if user
         time_now = Time.now
 
-        if user.created_at + ENV["time_for_audentification"].to_i > time_now
-          set_subscriber(user)
+        if user.created_at + User.time_for_authentification > time_now
+          user.status = "subscriber"
+          user.save(validate: false)
           format.html { redirect_to root_url, :notice => "Thank you now you are authorized" and return }
           format.json { render json: {message: "authorized"}, status: :ok and return }
         else
           user.destroy
           format.html { redirect_to root_url, :notice => "Your authorization is not valid" and return }
-          format.json { render json: {message: "error time audentification"}, status: :unprocessable_entity and return }
+          format.json { render json: {message: "error time authentification"}, status: :unprocessable_entity and return }
         end
       end
       format.html { redirect_to root_url, :notice => "Your authorization is not valid" }
@@ -102,9 +98,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if user
         if user.name == password[:name]
-
-          o = [("a".."z"), ("A".."Z")].map(&:to_a).flatten
-          p_new = (0...20).map { o[rand(o.length)] }.join
+          p_new = password_generate
 
           if user.update_attribute(:password, p_new)
             EmailSendJob.perform_later(user.email, p_new)
