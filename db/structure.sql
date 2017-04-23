@@ -11,7 +11,7 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
-SET row_security = OFF;
+SET row_security = off;
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
@@ -161,17 +161,17 @@ ALTER SEQUENCE ingredient_categories_id_seq OWNED BY ingredient_categories.id;
 --
 
 CREATE TABLE ingredients (
-  id                     INTEGER                     NOT NULL,
-  name                   CHARACTER VARYING,
-  content                TEXT,
-  href                   CHARACTER VARYING,
-  ingredient_category_id INTEGER,
-  created_at             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-  updated_at             TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-  calories               INTEGER,
-  protein                INTEGER,
-  fat                    INTEGER,
-  carbohydrate           INTEGER
+    id integer NOT NULL,
+    name character varying,
+    content text,
+    href character varying,
+    ingredient_category_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    calories integer,
+    protein integer,
+    fat integer,
+    carbohydrate integer
 );
 
 
@@ -271,17 +271,17 @@ ALTER SEQUENCE recipe_ingredients_id_seq OWNED BY recipe_ingredients.id;
 --
 
 CREATE TABLE recipes (
-  id                 INTEGER                     NOT NULL,
-  name               CHARACTER VARYING,
-  content            TEXT,
-  recipe_category_id INTEGER,
-  cooking_time       CHARACTER VARYING,
-  calories           INTEGER,
-  protein            INTEGER,
-  fat                INTEGER,
-  carbohydrate       INTEGER,
-  created_at         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-  updated_at         TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    id integer NOT NULL,
+    name character varying,
+    content text,
+    recipe_category_id integer,
+    cooking_time character varying,
+    calories integer,
+    protein integer,
+    fat integer,
+    carbohydrate integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -602,16 +602,14 @@ CREATE INDEX index_users_on_status ON users USING btree (status);
 -- Name: recipes_content; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX recipes_content
-  ON recipes USING GIN (to_tsvector('russian' :: REGCONFIG, content));
+CREATE INDEX recipes_content ON recipes USING gin (to_tsvector('russian'::regconfig, content));
 
 
 --
 -- Name: recipes_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX recipes_name
-  ON recipes USING GIN (to_tsvector('russian' :: REGCONFIG, (name) :: TEXT));
+CREATE INDEX recipes_name ON recipes USING gin (to_tsvector('russian'::regconfig, (name)::text));
 
 
 --
@@ -641,6 +639,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20170323102236'),
 ('20170323111527'),
 ('20170404142938'),
-('20170404152439');
+('20170404152439'),
+('20170423173932');
 
 
