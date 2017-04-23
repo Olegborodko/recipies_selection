@@ -7,19 +7,19 @@ class Recipe < ApplicationRecord
   has_many :favorite_recipes
   # has_many (or has_and_belongs_to_many):users, :through => :favorite_recipes    <- need create join table recipes_users
 
-  pg_search_scope :search, against: [:name, :content],
-                  using: { tsearch: { dictionary: "russian" } },
-                  associated_against: {recipe_category: :title, ingredients: [:name, :content]},
-                  # users: [:name, :email, :slug]
+  pg_search_scope :search,
+                  against: [:name],
+                  using: { tsearch: { dictionary: "russian",
+                                      prefix: true,
+                                      any_word: true } },
+                  associated_against: { ingredients: [:name] },
                   ignoring: :accents
-
 
   def self.text_search(query)
     if query.present?
       # search(query)
       rank = <<-RANK
-        ts_rank(to_tsvector(name), plainto_tsquery(#{sanitize(query)})) + 
-        ts_rank(to_tsvector(content), plainto_tsquery(#{sanitize(query)}))
+        ts_rank(to_tsvector(name), plainto_tsquery(#{sanitize(query)}))
       RANK
       where("to_tsvector('russian', name) @@ :q or
              to_tsvector('russian', content) @@ :q", q: query).order("#{rank} desk")
