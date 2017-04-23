@@ -21,7 +21,7 @@ class User < ApplicationRecord
   def password_complexity
     return if self.password.nil?
     required_complexity = 2 # we're actually storing this in the configuration of each customer
-    if !CheckPasswordComplexity.new(password, required_complexity).valid?
+    unless CheckPasswordComplexity.new(password, required_complexity).valid?
       errors.add :password, "Your password does not match the security requirements. Please use A-Z, a-z, 0-9"
     end
   end
