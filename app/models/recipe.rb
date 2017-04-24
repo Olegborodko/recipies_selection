@@ -33,4 +33,9 @@ class Recipe < ApplicationRecord
       obj[ri.ingredient.name] = ri.number_of_ingredient
     end
   end
+
+  def self.update_index
+    Recipe.find_each(&:touch)
+  end
 end
+
