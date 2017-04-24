@@ -4,6 +4,18 @@ module Modules
     format :json
 
     desc 'Receipt controller'
+
+    namespace :search do
+      desc 'Search'
+      params do
+        requires :query, type: String
+      end
+      get do
+        receipts = Recipe.search(params[:query])
+        present receipts, with: Api::Entities::Receipt
+      end
+    end
+
     resource :recipes do
 
       helpers do
@@ -50,16 +62,15 @@ module Modules
       end
       post do
         ingredient = set_ing_category.ingredients.find(params[:ingredient_id])
-        # receipt = set_rec_category.recipes.create(declared(params, include_missing: false).to_hash)
-        receipt = set_rec_category.recipes.find_or_create_by({
-                                                                 recipe_category_id: params[:recipe_category_id],
-                                                                 name: params[:name],
-                                                                 content: params[:content],
-                                                                 cooking_time: params[:cooking_time],
-                                                                 calories: params[:calories],
-                                                                 protein: params[:protein],
-                                                                 fat: params[:fat],
-                                                                 carbohydrate: params[:carbohydrate] })
+        receipt = set_rec_category.recipes.find_or_create_by(
+          recipe_category_id: params[:recipe_category_id],
+          name: params[:name],
+          content: params[:content],
+          cooking_time: params[:cooking_time],
+          calories: params[:calories],
+          protein: params[:protein],
+          fat: params[:fat],
+          carbohydrate: params[:carbohydrate])
 
         receipt.ingredients << ingredient
         ri_all = receipt.recipe_ingredients

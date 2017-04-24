@@ -21,8 +21,7 @@ class Recipe < ApplicationRecord
       rank = <<-RANK
         ts_rank(to_tsvector(name), plainto_tsquery(#{sanitize(query)}))
       RANK
-      where("to_tsvector('russian', name) @@ :q or
-             to_tsvector('russian', content) @@ :q", q: query).order("#{rank} desk")
+      where("to_tsvector('russian', name) @@ :q or to_tsvector('russian', content) @@ :q", q: query).order("#{rank}Desc")
     else
       scoped
     end
