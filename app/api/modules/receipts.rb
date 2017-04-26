@@ -3,6 +3,15 @@ module Modules
     prefix :api
     format :json
 
+    helpers do
+      include SessionHelper
+      include UserHelpers
+    end
+
+    before do
+      @current_user = get_user_from_token(users_token)
+    end
+
     desc 'Receipt controller'
 
     namespace :search do
@@ -61,6 +70,7 @@ module Modules
         requires :number_of_ingredient, type: String
       end
       post do
+        return { error: 'not authorized' } if !user_admin? @current_user
         ingredient = set_ing_category.ingredients.find(params[:ingredient_id])
         receipt = set_rec_category.recipes.find_or_create_by(
           recipe_category_id: params[:recipe_category_id],
@@ -103,6 +113,7 @@ module Modules
         optional :number_of_ingredient, type: String
       end
       put ':id' do
+        return { error: 'not authorized' } if !user_admin? @current_user
         receipt = set_rec_category.recipes.find(params[:id])
         if receipt.update(
             recipe_category_id: params[:recipe_category_id],
@@ -139,6 +150,7 @@ module Modules
         requires :recipe_category_id, type: Integer
       end
       delete ':id' do
+        return { error: 'not authorized' } if !user_admin? @current_user
         receipt = Recipe.find(params[:id])
         { status: :success } if receipt.delete
       end

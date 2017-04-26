@@ -15,4 +15,17 @@ module UserHelpers
     declared(params, include_missing: false).to_hash
   end
 
+  def user_admin?(user)
+    false
+    if user
+      if user.admin?
+        true
+      end
+    end
+  end
+
+  def users_token
+    params[:api_key] if params[:api_key]
+  end
+
 end

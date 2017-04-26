@@ -9,6 +9,10 @@ module Modules
       include UserHelpers
     end
 
+    before do
+      @current_user = get_user_from_token(users_token)
+    end
+
     resource :users do
 
       ###POST api/users
@@ -44,19 +48,20 @@ module Modules
                 { code: 406, message: 'Error time authentification' }]
       }
       params do
-        requires :user_token, desc: 'users token'
+        #requires :user_token, desc: 'users token'
       end
-      get 'verification/:user_token' do
-        user = get_user_from_token(all_params_hash['user_token'])
-        if user
-          if user.created_at + User.time_for_authentification > Time.now
-            user.status = "subscriber"
-            user.save(validate: false)
-            return { messages: 'authorized' }
-          else
-            user.destroy
-            status 406
-            return { error: 'error time authentification' }
+      get 'verification' do
+        if @current_user
+          if @current_user.unauthorized?
+            if @current_user.created_at + User.time_for_authentification > Time.now
+              @current_user.status = "subscriber"
+              @current_user.save(validate: false)
+              return { messages: 'authorized' }
+            else
+              @current_user.destroy
+              status 406
+              return { error: 'error time authentification' }
+            end
           end
         end
         status 401
@@ -74,7 +79,7 @@ module Modules
         requires :password, type: String, desc: 'users password'
       end
       post :login do
-        user = api_helper_authentication(all_params_hash['email'],all_params_hash['password'])
+        user = api_helper_authentication(params[:email],params[:password])
         if user
           { token: token_encode(user.rid), message: 'login success' }
         else
@@ -83,40 +88,37 @@ module Modules
         end
       end
 
-      ##PATCH /api/users/:user_token
+      ##PATCH /api/users
       desc 'User update', {
       is_array: true,
       success: Entities::UserBase,
       failure: [{ code: 406, message: 'Invalid parameter entry' }]
       }
       params do
-        requires :user_token, type: String, desc: 'users token'
         requires :description, type: String, desc: 'users description'
       end
       patch do
-        user = get_user_from_token(all_params_hash['user_token'])
-        if user
-          user.update_attribute(:description, all_params_hash['description'])
-          present user, with: Entities::UserBase
+        if @current_user
+          @current_user.update_attribute(:description, params[:description])
+          present @current_user, with: Entities::UserBase
         else
           status 406
           { error: 'Invalid users token' }
         end
       end
 
-      ###GET /api/users/:user_token
+      ###GET /api/user
       desc 'User information', {
       is_array: true,
       success: Entities::UserBase,
       failure: [{ code: 406, message: 'Invalid users token' }]
       }
       params do
-        requires :user_token, type: String, desc: 'users token'
+        #requires :user_token, type: String, desc: 'users token'
       end
       get do
-        user = get_user_from_token(all_params_hash['user_token'])
-        if user
-          present user, with: Entities::UserBase
+        if @current_user
+          present @current_user, with: Entities::UserBase
         else
           status 406
           { error: 'Invalid users token' }
@@ -134,7 +136,7 @@ module Modules
         requires :email, type: String, desc: 'users email'
       end
       post :restore_password do
-        user = User.find_by email: all_params_hash['email'], name: all_params_hash['name']
+        user = User.find_by email: params[:email], name: params[:name]
         if user
           p_new = password_generate
           user.update_attribute(:password, p_new)

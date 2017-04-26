@@ -9,6 +9,10 @@ module Modules
       include UserHelpers
     end
 
+    before do
+      @current_user = get_user_from_token(users_token)
+    end
+
     resource :admin do
 
       ###POST /api/admin/mandrill
@@ -18,17 +22,13 @@ module Modules
       failure: [{ code: 406, message: 'not authorized' }]
       }
       params do
-        requires :admin_token, type: String, desc: 'admins token'
         requires :template_name, type: String, desc: 'template name (example - eat_template)'
         requires :template_content, type: String, desc: 'template content'
       end
       post :mandrill do
-        user = get_user_from_token(all_params_hash['admin_token'])
-        if user
-          if user.admin?
-            MandrillJob.perform_later(all_params_hash['template_name'], all_params_hash['template_content'])
-            return { message: 'letters sent' }
-          end
+        if user_admin? @current_user
+          MandrillJob.perform_later(params[:template_name], params[:template_content])
+          return { message: 'letters sent' }
         end
         status 406
         { error: 'not authorized' }
@@ -41,15 +41,12 @@ module Modules
       failure: [{ code: 406, message: 'not authorized' }]
       }
       params do
-        requires :admin_token, type: String, desc: 'admins token'
+        #requires :admin_token, type: String, desc: 'admins token'
       end
       post :parser do
-        user = get_user_from_token(all_params_hash['admin_token'])
-        if user
-          if user.admin?
-            ParserJob.perform_later
-            return { message: 'parser starts' }
-          end
+        if user_admin? @current_user
+          ParserJob.perform_later
+          return { message: 'parser starts' }
         end
         status 406
         { error: 'not authorized' }
@@ -62,14 +59,11 @@ module Modules
       failure: [{ code: 406, message: 'not authorized' }]
       }
       params do
-        requires :admin_token, type: String, desc: 'admins token'
+        #requires :admin_token, type: String, desc: 'admins token'
       end
       get 'user_all' do
-        user = get_user_from_token(all_params_hash['admin_token'])
-        if user
-          if user.admin?
-            return present User.all, with: Entities::UserInfo
-          end
+        if user_admin? @current_user
+          return present User.all, with: Entities::UserBase
         end
         status 406
         { error: 'not authorized' }

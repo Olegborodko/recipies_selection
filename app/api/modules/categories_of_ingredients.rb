@@ -3,6 +3,15 @@ module Modules
     prefix :api
     format :json
 
+    helpers do
+      include SessionHelper
+      include UserHelpers
+    end
+
+    before do
+      @current_user = get_user_from_token(users_token)
+    end
+
     resource :categories_of_ingredients do
 
       desc 'All categories'
@@ -25,6 +34,7 @@ module Modules
         requires :title, type: String
       end
       post do
+        return { error: 'not authorized' } if !user_admin? @current_user
         category_of_ingredients = IngredientCategory.new(
             declared(params, include_missing: false).to_h)
         if category_of_ingredients.save
@@ -41,6 +51,7 @@ module Modules
         requires :title, type: String
       end
       put ':id' do
+        return { error: 'not authorized' } if !user_admin? @current_user
         category_of_ingredients = IngredientCategory.find(params[:id])
         if category_of_ingredients.update(declared(params, include_missing: false).to_h)
           present category_of_ingredients, with: Api::Entities::CategoryOfIngredients
@@ -55,6 +66,7 @@ module Modules
         requires :id, type: Integer
       end
       delete ':id' do
+        return { error: 'not authorized' } if !user_admin? @current_user
         {status: :success} if IngredientCategory.find(params[:id]).destroy
       end
     end
