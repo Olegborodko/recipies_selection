@@ -3,22 +3,22 @@ module Modules
     prefix :api
     format :json
 
+    helpers do
+      def set_ing_category
+        IngredientCategory.find(params[:ingredient_category_id])
+      end
+    end
+
     desc 'Ingredients controller'
-    # namespace 'categories_of_ingredients/:ingredient_category_id' do
     resource :ingredients do
 
-      helpers do
-        def set_category
-          IngredientCategory.find(params[:ingredient_category_id])
-        end
-      end
 
       desc 'All ingredients in current category'
       params do
         requires :ingredient_category_id, type: Integer
       end
       get do
-        components = set_category.ingredients
+        components = set_ing_category.ingredients
         present components, with: Api::Entities::Component
       end
 
@@ -27,7 +27,7 @@ module Modules
         requires :ingredient_category_id, type: Integer
       end
       get ':id' do
-        component = set_category.ingredients.find(params[:id])
+        component = set_ing_category.ingredients.find(params[:id])
         present component, with: Api::Entities::Component
       end
 
@@ -43,7 +43,7 @@ module Modules
         requires :carbohydrate, type: Integer
       end
       post do
-        component = set_category.ingredients.create(declared(params, include_missing: false).to_hash)
+        component = set_ing_category.ingredients.create(declared(params, include_missing: false).to_hash)
         if component.save
           present component, with: Api::Entities::Component
           {status: :success}
@@ -64,7 +64,7 @@ module Modules
         optional :carbohydrate, type: Integer
       end
       put ':id' do
-        component = set_category.ingredients.find(params[:id])
+        component = set_ing_category.ingredients.find(params[:id])
         if component.update(declared(params, include_missing: false).to_hash)
           {status: :success}
         else
