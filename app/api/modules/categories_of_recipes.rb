@@ -34,7 +34,7 @@ module Modules
         requires :title, type: String
       end
       post do
-        return { error: 'not authorized' } if !user_admin? @current_user
+        { error: 'not authorized' } unless user_admin? @current_user
         category_of_recipes = RecipeCategory.new(
             declared(params, include_missing: false).to_h)
         if category_of_recipes.save
@@ -51,7 +51,7 @@ module Modules
         requires :title, type: String
       end
       put ':id' do
-        return { error: 'not authorized' } if !user_admin? @current_user
+        { error: 'not authorized' } unless user_admin? @current_user
         category_of_recipes = RecipeCategory.find(params[:id])
         if category_of_recipes.update(declared(params, include_missing: false).to_h)
           present category_of_recipes, with: Api::Entities::CategoryOfRecipes
@@ -66,7 +66,7 @@ module Modules
         requires :id, type: Integer
       end
       delete ':id' do
-        return { error: 'not authorized' } if !user_admin? @current_user
+        { error: 'not authorized' } unless user_admin? @current_user
         {status: :success} if RecipeCategory.find(params[:id]).destroy
       end
     end

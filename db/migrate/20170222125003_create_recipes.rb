@@ -1,7 +1,7 @@
 class CreateRecipes < ActiveRecord::Migration[5.0]
   def change
     create_table :recipes do |t|
-      t.string :name
+      t.string :name, unique: true
       t.text :content
       t.integer :recipes_category_id
       t.string :cooking_time
