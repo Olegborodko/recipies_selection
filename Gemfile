@@ -70,6 +70,10 @@ end
 group :test do
   gem 'rspec-rails'
   gem 'email_spec'
+  gem 'simplecov', :require => false
+  gem 'database_cleaner'
+  gem 'faker'
+  gem 'rspec-sidekiq'
 end
 
 group :development do

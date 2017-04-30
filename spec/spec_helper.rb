@@ -96,4 +96,15 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+
+  # require "simplecov"
+  # SimpleCov.start do
+  #   add_group 'Modules', 'api/modules'
+  # end
+  #
+  # SimpleCov.coverage_dir 'public/coverage'
+
+   require 'sidekiq/testing'
+   Sidekiq::Testing.inline!
+
 end
