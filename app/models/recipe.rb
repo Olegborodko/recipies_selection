@@ -5,6 +5,7 @@ class Recipe < ApplicationRecord
   has_many :recipe_ingredients
   has_many :ingredients, through: :recipe_ingredients
   has_many :favorite_recipes
+  has_many :users, through: :recipe_ingredients
   # has_many (or has_and_belongs_to_many):users, :through => :favorite_recipes    <- need create join table recipes_users
 
   pg_search_scope :search,

@@ -104,7 +104,7 @@ RSpec.configure do |config|
   #
   # SimpleCov.coverage_dir 'public/coverage'
 
-   require 'sidekiq/testing'
-   Sidekiq::Testing.inline!
+   # require 'sidekiq/testing'
+   # Sidekiq::Testing.inline!
 
 end

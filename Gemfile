@@ -73,7 +73,7 @@ group :test do
   gem 'simplecov', :require => false
   gem 'database_cleaner'
   gem 'faker'
-  gem 'rspec-sidekiq'
+  gem 'factory_girl_rails'
 end
 
 group :development do

@@ -126,6 +126,11 @@ GEM
       tzinfo
     excon (0.55.0)
     execjs (2.7.0)
+    factory_girl (4.8.0)
+      activesupport (>= 3.0.0)
+    factory_girl_rails (4.8.0)
+      factory_girl (~> 4.8.0)
+      railties (>= 3.0.0)
     faker (1.7.3)
       i18n (~> 0.5)
     ffi (1.9.18)
@@ -259,9 +264,6 @@ GEM
       rspec-expectations (~> 3.5.0)
       rspec-mocks (~> 3.5.0)
       rspec-support (~> 3.5.0)
-    rspec-sidekiq (3.0.1)
-      rspec-core (~> 3.0, >= 3.0.0)
-      sidekiq (>= 2.4.0)
     rspec-support (3.5.0)
     ruby_dep (1.5.0)
     rufus-scheduler (3.4.0)
@@ -346,6 +348,7 @@ DEPENDENCIES
   coffee-rails
   database_cleaner
   email_spec
+  factory_girl_rails
   faker
   figaro
   friendly_id
@@ -367,7 +370,6 @@ DEPENDENCIES
   rack-cors
   rails
   rspec-rails
-  rspec-sidekiq
   sass-rails
   sidekiq
   sidekiq-cron

@@ -28,7 +28,7 @@ module Modules
       post do
         recipe = Recipe.find_by id: params[:recipe_id]
 
-        if @current_user && recipe
+        if user_is_allowed(@current_user) && recipe
           fr = FavoriteRecipe.find_by user: @current_user, recipe: recipe
           if fr
             status 400
@@ -54,8 +54,8 @@ module Modules
       params do
         #requires :user_token, type: String, desc: 'users token'
       end
-      get ':favorite_recipes' do
-        if @current_user
+      get do
+        if user_is_allowed @current_user
           m = FavoriteRecipe.where(user: @current_user)
           present m, with: Entities::FavoriteRecipeEntities
         else
@@ -71,14 +71,14 @@ module Modules
       failure: [{ code: 406, message: 'Invalid users token or recipe id' }]
       }
       params do
-        requires :favorite_recipe_id, type: String, desc: 'favorite recipe id'
+        requires :favorite_recipe_id, type: Integer, desc: 'favorite recipe id'
       end
-      delete ':favorite_recipe_id' do
-        if @current_user
-          fr = FavoriteRecipe.find_by user: @current_user, recipe_id: params[:favorite_recipe_id].to_i
+      delete do
+        if user_is_allowed @current_user
+          fr = FavoriteRecipe.find_by user: @current_user, id: params[:favorite_recipe_id]
           if fr
-            FavoriteRecipe.destroy(fr)
-            { message: 'success' }
+            FavoriteRecipe.destroy(params[:favorite_recipe_id])
+            return { message: 'success' }
           end
         end
         status 406

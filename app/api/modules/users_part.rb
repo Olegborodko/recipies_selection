@@ -98,12 +98,12 @@ module Modules
         requires :description, type: String, desc: 'users description'
       end
       patch do
-        if @current_user
+        if user_is_allowed @current_user
           @current_user.update_attribute(:description, params[:description])
           present @current_user, with: Entities::UserBase
         else
           status 406
-          { error: 'Invalid users token' }
+          { error: 'Invalid users token or access' }
         end
       end
 
@@ -117,7 +117,7 @@ module Modules
         #requires :user_token, type: String, desc: 'users token'
       end
       get do
-        if @current_user
+        if user_is_allowed @current_user
           present @current_user, with: Entities::UserBase
         else
           status 406
@@ -137,15 +137,14 @@ module Modules
       end
       post :restore_password do
         user = User.find_by email: params[:email], name: params[:name]
-        if user
+        if user_is_allowed user
           p_new = password_generate
           user.update_attribute(:password, p_new)
           EmailSendJob.perform_later(user.email, p_new)
-          { message: 'success', password: p_new }
-        else
-          status 406
-          { error: 'Invalid name or email' }
+          return { message: 'success', password: p_new }
         end
+        status 406
+        { error: 'Invalid name or email' }
       end
 
     end

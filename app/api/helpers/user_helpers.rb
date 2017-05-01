@@ -24,6 +24,16 @@ module UserHelpers
     end
   end
 
+  def user_is_allowed(user)
+    if user
+      return false if user.unauthorized?
+      return false if user.ban?
+      true
+    else
+      false
+    end
+  end
+
   def users_token
     params[:api_key] if params[:api_key]
   end
