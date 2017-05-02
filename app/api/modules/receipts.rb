@@ -138,18 +138,15 @@ module Modules
           fat: params[:fat],
           carbohydrate: params[:carbohydrate])
 
-          receipt.ingredients << ingredient
+          # receipt.ingredients << ingredient
           ri_all = receipt.recipe_ingredients
-          x = 0
-          ri_all.each_with_object({}) do |ri, obj|
+          x = params[:ingredient_id].size
+          ri_all.where(ingredient_id: params[:ingredient_id]).each_with_object({}) do |ri, obj|
+            x -= 1
             obj[ri.ingredient.name] = ri.number_of_ingredient
             ri.number_of_ingredient = params[:number_of_ingredient][x]
-            x += 1
             ri.save
           end
-
-
-
           present receipt, with: Api::Entities::Receipt
           { status: :success }
         else
