@@ -18,7 +18,7 @@ describe "UsersPart" do
     @email_user_create = UserMailer.create("jojo@yahoo.com", "Jojo Binks")
     @email_password_restore = UserMailer.password_new("jojo@yahoo.com", "qqq111")
 
-    @user = User.create(email: Faker::Internet.unique.email, status:"unauthorized", password: password_generate, name: Faker::Name.name)
+    @user = create(:user, status:'unauthorized')
     @token = token_encode(@user.rid)
   end
 
@@ -28,10 +28,7 @@ describe "UsersPart" do
 
   it "Create a new user" do
     password = password_generate
-    all_params = { email: Faker::Internet.unique.email,
-                   name: Faker::Name.name ,
-                   password: password,
-                   password_confirmation: password }
+    all_params = attributes_for(:user, password: password, password_confirmation: password)
     post '/api/users', params: all_params
     expect(response.status).to eq 201
     expect(enqueued_jobs.size).to eq(1)
@@ -51,42 +48,35 @@ describe "UsersPart" do
   end
 
   it "Create a new user (error)" do
-    all_params = { email: Faker::Internet.unique.email,
-                   name: Faker::Name.name,
-                   password: 'fail',
-                   password_confirmation: 'fail' }
+    all_params = attributes_for(:user, password: 'fail', password_confirmation: 'fail')
     post '/api/users', params: all_params
     expect(response.status).to eq 406
     expect(enqueued_jobs.size).to eq(0)
   end
 
   it "User verification" do
-    all_params = { api_key: @token }
-    get '/api/users/verification', params: all_params
+    get '/api/users/verification', params: { api_key: @token }
     expect(response.status).to eq 200
     user = User.find_by email: @user[:email]
     expect(user.status).to eq 'subscriber'
   end
 
   it "User verification (error)" do
-    all_params = { api_key: 'fake' }
-    get '/api/users/verification', params: all_params
+    get '/api/users/verification', params: { api_key: 'fake' }
     expect(response.status).to eq 401
   end
 
   it "User verification time (error)" do
     @user.created_at -= User.time_for_authentification
     @user.save
-    all_params = { api_key: @token }
-    get '/api/users/verification', params: all_params
+    get '/api/users/verification', params: { api_key: @token }
     expect(response.status).to eq 406
     user = User.find_by email: @user[:email]
     expect(user).to eq nil
   end
 
   it "User login" do
-    @user.status = 'subscriber'
-    @user.save
+    @user.subscriber!
     all_params = { email: @user.email, password: @user.password }
     post '/api/users/login', params: all_params
     expect(response.status).to eq 201
@@ -99,8 +89,7 @@ describe "UsersPart" do
   end
 
   it "User update" do
-    @user.status = 'subscriber'
-    @user.save
+    @user.subscriber!
     all_params = { api_key: @token, description: 'new description' }
     patch '/api/users/', params: all_params
     expect(response.status).to eq 200
@@ -114,8 +103,7 @@ describe "UsersPart" do
   end
 
   it "Set new password" do
-    @user.status = 'subscriber'
-    @user.save
+    @user.subscriber!
     expect(api_helper_authentication(@user.email, @user.password)).to eq @user
 
     all_params = { name: @user.name, email: @user.email }
@@ -136,16 +124,13 @@ describe "UsersPart" do
   end
 
   it "User information" do
-    @user.status = 'subscriber'
-    @user.save
-    all_params = { api_key: @token }
-    get '/api/users', params: all_params
+    @user.subscriber!
+    get '/api/users', params: { api_key: @token }
     expect(response.status).to eq 200
   end
 
   it "User information (error)" do
-    all_params = { api_key: 'fake' }
-    get '/api/users', params: all_params
+    get '/api/users', params: { api_key: 'fake' }
     expect(response.status).to eq 406
   end
 

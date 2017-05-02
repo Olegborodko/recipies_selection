@@ -69,6 +69,35 @@ module Modules
         { error: 'not authorized' }
       end
 
+      ###POST /api/admin/ban_user/
+      desc 'Ban/unban user', {
+      is_array: true,
+      success: { message: 'success' },
+      failure: [{ code: 401, message: 'not authorized' },
+                { code: 406, message: 'the user is not suitable for ban'  }]
+      }
+      params do
+        requires :users_email, type: String, desc: 'user\'s email'
+      end
+      post :ban_user do
+        if user_admin? @current_user
+          user = User.find_by email: params[:users_email]
+          if user
+            if user.ban?
+              user.update_attribute(:status, 'subscriber')
+              return { message: "success, user's status now is #{user.status}" }
+            elsif user.subscriber?
+              user.update_attribute(:status, 'ban')
+              return { message: "success, user's status now is #{user.status}" }
+            end
+          end
+          status 406
+          return { error: 'the user is not suitable for ban' }
+        end
+        status 401
+        { error: 'not authorized' }
+      end
+
     end
   end
 end
