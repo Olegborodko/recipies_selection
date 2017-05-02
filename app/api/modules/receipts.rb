@@ -20,7 +20,7 @@ module Modules
         requires :query, type: String
       end
       get do
-        receipts = Recipe.search(params[:query])
+        receipts = Recipe.includes(:ingredients, :recipe_ingredients).search(params[:query])
         present receipts, with: Api::Entities::Receipt
       end
     end

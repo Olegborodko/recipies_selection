@@ -10,13 +10,13 @@ class Recipe < ApplicationRecord
             uniqueness: { case_sensitive: false },
             length: { minimum: 2, maximum: 100 },
             on: [:create, :update],
-            presence: { message: "Name must be given please" }
-            # if: :sum?
+            presence: { message: 'Name must be given please' },
+            if: :sum?
   validates :content,
             uniqueness: { case_sensitive: false },
             length: { minimum: 50, maximum: 10_000 },
             on: [:create, :update],
-            presence: { message: "Content must be given please" }
+            presence: { message: 'Content must be given please' }
   validates_associated :recipe_ingredients, :favorite_recipes, :ingredients
 
   def sum?
@@ -25,7 +25,7 @@ class Recipe < ApplicationRecord
 
   pg_search_scope :search,
                   against: [:name],
-                  using: { tsearch: { dictionary: "russian",
+                  using: { tsearch: { dictionary: 'russian',
                                       prefix: true,
                                       any_word: true } },
                   associated_against: { ingredients: [:name] },
@@ -35,7 +35,7 @@ class Recipe < ApplicationRecord
     if query.present?
       # search(query)
       rank = <<-RANK
-        ts_rank(to_tsvector(name), plainto_tsquery(#{sanitize(query)})) + 
+        ts_rank(to_tsvector(name), plainto_tsquery(#{sanitize(query)})) +
         ts_rank(to_tsvector(content), plainto_tsquery(#{sanitize(query)}))
       RANK
       where("to_tsvector('russian', name) @@ :q or to_tsvector('russian', content) @@ :q", q: query).order("#{rank}Desc")
