@@ -5,7 +5,7 @@ class Recipe < ApplicationRecord
   has_many :recipe_ingredients, inverse_of: :recipe, dependent: :destroy
   has_many :ingredients, through: :recipe_ingredients
   has_many :users, through: :favorite_recipes
-  has_many :favorite_recipes, dependent: :destroy, inverse_of: :recipe
+  has_many :favorite_recipes , dependent: :destroy, inverse_of: :recipe
 
   validates :name,
             uniqueness: { case_sensitive: false },
