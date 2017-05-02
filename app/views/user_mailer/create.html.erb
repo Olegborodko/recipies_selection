@@ -1,5 +1,5 @@
 <h1><%= t("email_text") %> <a href="<%= root_url() %>"> <%= t("site_name") %></a></h1>
-<p><%= t("please_go_to_link") %> <%= link_to 'Verification', @path %></p>
+<p><%= t("please_go_to_link") %> <%= link_to 'Verification', "www.#{ENV["domain"]}/api/users/verification/#{@path}" %></p>
 <br>
 <p>
   <%= t("thank_you") %>

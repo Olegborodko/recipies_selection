@@ -1,4 +1,4 @@
 <%= t("email_text") %> <%= t("site_name") %>
-<%= t("please_go_to_link") %> <%= link_to 'Verification', @path %>
+<%= t("please_go_to_link") %> <%= link_to 'Verification', "www.#{ENV["domain"]}/api/users/verification/#{@path}" %>
 
 ..  <%= t("thank_you") %>
