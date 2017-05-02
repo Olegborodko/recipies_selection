@@ -65,14 +65,19 @@ module Modules
         requires :protein, type: Integer
         requires :fat, type: Integer
         requires :carbohydrate, type: Integer
-        requires :ingredient_category_id, type: Integer
-        requires :ingredient_id, type: Integer
-        requires :number_of_ingredient, type: String
+        requires :ingredient_id, type: Array(Integer), coerce_with: ->(val) do
+          val.split(/\, /).map(&:to_s)
+        end,
+                 desc: 'Array of ingredient'
+        requires :number_of_ingredient, type: Array(String), coerce_with: ->(val) do
+          val.split(/\, /).map(&:to_s)
+        end,
+                 desc: 'Array of number of each ingredient'
       end
       post do
-        return { error: 'not authorized' } if !user_admin? @current_user
-        ingredient = set_ing_category.ingredients.find(params[:ingredient_id])
-        receipt = set_rec_category.recipes.find_or_create_by(
+        { error: 'not authorized' } unless user_admin? @current_user
+        ingredient = Ingredient.find(params[:ingredient_id])
+        receipt = set_rec_category.recipes.build(
           recipe_category_id: params[:recipe_category_id],
           name: params[:name],
           content: params[:content],
@@ -83,14 +88,16 @@ module Modules
           carbohydrate: params[:carbohydrate])
 
         receipt.ingredients << ingredient
-        ri_all = receipt.recipe_ingredients
-        ri_all.each_with_object({}) do |ri, obj|
-          obj[ri.ingredient.name] = ri.number_of_ingredient
-          ri.number_of_ingredient = params[:number_of_ingredient]
-          ri.save!
-        end
 
         if receipt.save
+          ri_all = receipt.recipe_ingredients
+          x = 0
+          ri_all.each_with_object({}) do |ri, obj|
+            obj[ri.ingredient.name] = ri.number_of_ingredient
+            ri.number_of_ingredient = params[:number_of_ingredient][x]
+            x += 1
+            ri.save
+          end
           present receipt, with: Api::Entities::Receipt
           { status: :success }
         else
@@ -108,36 +115,41 @@ module Modules
         optional :protein, type: Integer
         optional :fat, type: Integer
         optional :carbohydrate, type: Integer
-        optional :ingredient_category_id, type: Integer
-        optional :ingredient_id, type: Integer
-        optional :number_of_ingredient, type: String
+        optional :ingredient_id, type: Array(Integer), coerce_with: ->(val) do
+          val.split(/\, /).map(&:to_s)
+        end,
+                 desc: 'Array of ingredient'
+        optional :number_of_ingredient, type: Array(String), coerce_with: ->(val) do
+          val.split(/\, /).map(&:to_s)
+        end,
+                 desc: 'Array of number of each ingredient'
       end
       put ':id' do
-        return { error: 'not authorized' } if !user_admin? @current_user
+        { error: 'not authorized' } unless user_admin? @current_user
+        ingredient = Ingredient.find(params[:ingredient_id])
         receipt = set_rec_category.recipes.find(params[:id])
         if receipt.update(
-            recipe_category_id: params[:recipe_category_id],
-            name: params[:name],
-            content: params[:content],
-            cooking_time: params[:cooking_time],
-            calories: params[:calories],
-            protein: params[:protein],
-            fat: params[:fat],
-            carbohydrate: params[:carbohydrate])
+          recipe_category_id: params[:recipe_category_id],
+          name: params[:name],
+          content: params[:content],
+          cooking_time: params[:cooking_time],
+          calories: params[:calories],
+          protein: params[:protein],
+          fat: params[:fat],
+          carbohydrate: params[:carbohydrate])
 
-          ni = 0
-          unless ni > receipt.recipe_ingredients.size
-            ri_all = receipt.recipe_ingredients[ni]
-            # ri_all.each_with_object({}) do |ri, obj|
-            #   obj[ri.ingredient.name] = ri.number_of_ingredient
-            #   ri.number_of_ingredient = params[:number_of_ingredient]
-            #   ri.save!
-            #   ni += 1
-            # end
-            ri_all.number_of_ingredient = params[:number_of_ingredient]
-            ri_all.save!
-            ni += 1
+          receipt.ingredients << ingredient
+          ri_all = receipt.recipe_ingredients
+          x = 0
+          ri_all.each_with_object({}) do |ri, obj|
+            obj[ri.ingredient.name] = ri.number_of_ingredient
+            ri.number_of_ingredient = params[:number_of_ingredient][x]
+            x += 1
+            ri.save
           end
+
+
+
           present receipt, with: Api::Entities::Receipt
           { status: :success }
         else
@@ -146,15 +158,11 @@ module Modules
       end
 
       desc 'Delete receipt'
-      params do
-        requires :recipe_category_id, type: Integer
-      end
       delete ':id' do
-        return { error: 'not authorized' } if !user_admin? @current_user
+        { error: 'not authorized' } unless user_admin? @current_user
         receipt = Recipe.find(params[:id])
-        { status: :success } if receipt.delete
+        { status: :success } if receipt.recipe_ingredients.destroy_all && receipt.delete
       end
-      # end
     end
   end
 end

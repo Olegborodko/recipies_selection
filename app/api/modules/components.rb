@@ -50,8 +50,8 @@ module Modules
         requires :carbohydrate, type: Integer
       end
       post do
-        return { error: 'not authorized' } if !user_admin? @current_user
-        component = set_ing_category.ingredients.create(declared(params, include_missing: false).to_hash)
+        { error: 'not authorized' } unless user_admin? @current_user
+        component = set_ing_category.ingredients.build(declared(params, include_missing: false).to_hash)
         if component.save
           present component, with: Api::Entities::Component
           {status: :success}
@@ -72,7 +72,7 @@ module Modules
         optional :carbohydrate, type: Integer
       end
       put ':id' do
-        return { error: 'not authorized' } if !user_admin? @current_user
+        { error: 'not authorized' } unless user_admin? @current_user
         component = set_ing_category.ingredients.find(params[:id])
         if component.update(declared(params, include_missing: false).to_hash)
           {status: :success}
@@ -86,7 +86,7 @@ module Modules
         requires :id, type: Integer, desc: 'Ingredient id'
       end
       delete ':id' do
-        return { error: 'not authorized' } if !user_admin? @current_user
+        { error: 'not authorized' } unless user_admin? @current_user
         component = Ingredient.find(params[:id])
         {status: :success} if component.delete
       end
