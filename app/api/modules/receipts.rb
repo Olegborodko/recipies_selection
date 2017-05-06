@@ -126,7 +126,6 @@ module Modules
       end
       put ':id' do
         { error: 'not authorized' } unless user_admin? @current_user
-        ingredient = Ingredient.find(params[:ingredient_id])
         receipt = set_rec_category.recipes.find(params[:id])
         if receipt.update(
           recipe_category_id: params[:recipe_category_id],
@@ -138,12 +137,10 @@ module Modules
           fat: params[:fat],
           carbohydrate: params[:carbohydrate])
 
-          # receipt.ingredients << ingredient
           ri_all = receipt.recipe_ingredients
           x = params[:ingredient_id].size
           ri_all.where(ingredient_id: params[:ingredient_id]).each_with_object({}) do |ri, obj|
             x -= 1
-            obj[ri.ingredient.name] = ri.number_of_ingredient
             ri.number_of_ingredient = params[:number_of_ingredient][x]
             ri.save
           end

@@ -54,7 +54,7 @@ module Modules
         component = set_ing_category.ingredients.build(declared(params, include_missing: false).to_hash)
         if component.save
           present component, with: Api::Entities::Component
-          {status: :success}
+          { status: :success }
         else
           error!(status: :error, message: component.errors.full_messages.first) if component.errors.any?
         end
@@ -75,7 +75,7 @@ module Modules
         { error: 'not authorized' } unless user_admin? @current_user
         component = set_ing_category.ingredients.find(params[:id])
         if component.update(declared(params, include_missing: false).to_hash)
-          {status: :success}
+          { status: :success }
         else
           error!(status: :error, message: component.errors.full_messages.first) if component.errors.any?
         end
@@ -88,7 +88,7 @@ module Modules
       delete ':id' do
         { error: 'not authorized' } unless user_admin? @current_user
         component = Ingredient.find(params[:id])
-        {status: :success} if component.delete
+        { status: :success } if component.delete
       end
       # end
     end
