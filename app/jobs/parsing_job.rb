@@ -134,25 +134,25 @@ class ParsingJob < ApplicationJob
 
   def create_other_ingredient(check_category, iu, link, name)
     check_category.ingredients.find_or_create_by(
-        name: name,
-        href: link,
-        content: @ingredient_url.css('#stages > p').text.strip,
-        calories: iu[0].text.strip,
-        protein: iu[1].text.strip,
-        fat: iu[2].text.strip,
-        carbohydrate: iu[3].text.strip
+      name: name,
+      href: link,
+      content: @ingredient_url.css('#stages > p').text.strip,
+      calories: iu[0].text.strip,
+      protein: iu[1].text.strip,
+      fat: iu[2].text.strip,
+      carbohydrate: iu[3].text.strip
     )
   end
 
   def create_recipe(check_recipe_category, recipe_name)
     check_recipe_category.recipes.find_or_create_by(
-        name: recipe_name,
-        content: @recipe_url.css('#stages div.instructions').text.strip,
-        cooking_time: @recipe_url.css('#stages > p').text.strip,
-        calories: @recipe_url.css('#topContributors > li:nth-child(1) > strong').text.strip,
-        protein: @recipe_url.css('#topContributors > li:nth-child(2) > strong').text.strip,
-        fat: @recipe_url.css('#topContributors > li:nth-child(3) > strong').text.strip,
-        carbohydrate: @recipe_url.css('#topContributors > li:nth-child(4) > strong').text.strip)
+      name: recipe_name,
+      content: @recipe_url.css('#stages div.instructions').text.strip,
+      cooking_time: @recipe_url.css('#stages > p').text.strip,
+      calories: @recipe_url.css('#topContributors > li:nth-child(1) > strong').text.strip,
+      protein: @recipe_url.css('#topContributors > li:nth-child(2) > strong').text.strip,
+      fat: @recipe_url.css('#topContributors > li:nth-child(3) > strong').text.strip,
+      carbohydrate: @recipe_url.css('#topContributors > li:nth-child(4) > strong').text.strip)
   end
 
   def create_ingredient(check_category, name, iu, link)
