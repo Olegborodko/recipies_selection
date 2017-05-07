@@ -1,3 +1,4 @@
+require 'sidekiq/api'
 Sidekiq.configure_server do |config|
   schedule_file = "config/schedule.yml"
   if File.exists?(schedule_file)
