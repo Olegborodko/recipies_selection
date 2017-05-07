@@ -5,7 +5,7 @@ class User < ApplicationRecord
   enum status: [ :unauthorized, :subscriber, :admin, :ban ]
 
   has_many :favorite_recipes
-  has_many :recipes, :through => :favorite_recipes
+  has_many :recipes, through: :favorite_recipes
 
   has_secure_password
   has_secure_token :rid

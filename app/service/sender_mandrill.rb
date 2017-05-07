@@ -13,11 +13,11 @@ class SenderMandrill
       mandrill = Mandrill::API.new Rails.application.secrets.mandrill_key
       template_content = [{"name": "footer", "content": @template_content}]
       message = {
-      :subject => "Favorite recipes",
-      :from_name => "user admin@#{ENV["domain"]}",
-      :from_email => "admin@#{ENV["domain"]}",
-      :to => User.all.as_json(only: [:name, :email]),
-      :preserve_recipients => false,
+      subject: "Favorite recipes",
+      from_name: "user admin@#{ENV["domain"]}",
+      from_email: "admin@#{ENV["domain"]}",
+      to: User.all.as_json(only: [:name, :email]),
+      preserve_recipients: false,
       }
       async = false
       r = mandrill.messages.send_template @template_name, template_content, message, async

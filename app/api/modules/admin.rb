@@ -98,6 +98,33 @@ module Modules
         { error: 'not authorized' }
       end
 
+      ###DELETE /api/admin/{:user_email}
+      desc 'Delete user', {
+      is_array: true,
+      success: { message: 'success' },
+      failure: [{ code: 401, message: 'not authorized' },
+                { code: 406, message: 'invalid users email' }]
+      }
+      params do
+        requires :users_email, type: String, desc: 'user\'s email'
+      end
+      delete 'user' do
+        if user_admin? @current_user
+          user = User.find_by email: params[:users_email]
+          if user
+            if !user.admin?
+              user.destroy
+              return { message: 'success' }
+            end
+          end
+          status 406
+          return { error: 'invalid users email' }
+        end
+      status 401
+      { error: 'not authorized' }
+      end
+
+
     end
   end
 end

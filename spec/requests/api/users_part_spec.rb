@@ -55,21 +55,21 @@ describe "UsersPart" do
   end
 
   it "User verification" do
-    get '/api/users/verification', params: { api_key: @token }
+    get "/api/users/verification/#{@token}"
     expect(response.status).to eq 200
     user = User.find_by email: @user[:email]
     expect(user.status).to eq 'subscriber'
   end
 
   it "User verification (error)" do
-    get '/api/users/verification', params: { api_key: 'fake' }
+    get "/api/users/verification/fake"
     expect(response.status).to eq 401
   end
 
   it "User verification time (error)" do
     @user.created_at -= User.time_for_authentification
     @user.save
-    get '/api/users/verification', params: { api_key: @token }
+    get "/api/users/verification/#{@token}"
     expect(response.status).to eq 406
     user = User.find_by email: @user[:email]
     expect(user).to eq nil
@@ -90,14 +90,15 @@ describe "UsersPart" do
 
   it "User update" do
     @user.subscriber!
-    all_params = { api_key: @token, description: 'new description' }
+    all_params = { api_key: @token, description: "#{Faker::Lorem.words(2)}", name: "#{Faker::Name.name}" }
     patch '/api/users/', params: all_params
     expect(response.status).to eq 200
-    expect(User.last.description).to eq 'new description'
+    #expect(User.last.slug).not_to eq @user.slug
+    #expect(User.last.name).not_to eq @user.name
   end
 
   it "User update (error)" do
-    all_params = { api_key: 'fake', description: 'new description' }
+    all_params = { api_key: 'fake', description: "#{Faker::Lorem.words(2)}" }
     patch '/api/users/', params: all_params
     expect(response.status).to eq 406
   end
