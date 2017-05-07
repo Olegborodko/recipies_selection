@@ -4,6 +4,11 @@ delete_not_authorized_users:
   queue: default
 
 parser:
-  cron: "1 4 1 * *"
-  class: "ParserJob"
+  cron: "0 0 * * 3 *"
+  class: "ParsingJob"
   queue: default
+
+#parser:
+#  cron: "1 4 1 * *"
+#  class: "ParserJob"
+#  queue: default

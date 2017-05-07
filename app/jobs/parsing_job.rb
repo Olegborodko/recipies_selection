@@ -1,14 +1,17 @@
-class ParserService
+class ParsingJob < ApplicationJob
+  queue_as :default
 
   PAGES = 1000
   PAGE = 24
-  def index
+
+  def perform
+    # ParserService.new.index
+
+
     @main_page = Nokogiri::HTML(open("http://namnamra.com/"))
     @ingredient_category_url = Nokogiri::HTML(open("http://namnamra.com/ingredients"))
-
     ingredients(links_ci)
     ingredient_save
-
     recipes(links_cr)
     recipe_save
   end

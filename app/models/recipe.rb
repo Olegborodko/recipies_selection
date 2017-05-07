@@ -5,7 +5,7 @@ class Recipe < ApplicationRecord
   has_many :recipe_ingredients, inverse_of: :recipe, dependent: :destroy
   has_many :ingredients, through: :recipe_ingredients
   has_many :users, through: :favorite_recipes
-  has_many :favorite_recipes , dependent: :destroy, inverse_of: :recipe
+  has_many :favorite_recipes, dependent: :destroy, inverse_of: :recipe
 
   validates :name,
             uniqueness: { case_sensitive: false },
@@ -18,10 +18,12 @@ class Recipe < ApplicationRecord
             length: { minimum: 50, maximum: 10_000 },
             on: [:create, :update],
             presence: { message: 'Content must be given please' }
+
+  validates :protein, :carbohydrate, :fat, :calories, presence: true
   validates_associated :recipe_ingredients, :favorite_recipes, :ingredients
 
   def sum?
-    (carbohydrate + fat + protein).to_i <= 100
+    (carbohydrate.to_i + fat.to_i + protein.to_i).to_i <= 100
   end
 
   pg_search_scope :search,
@@ -31,19 +33,6 @@ class Recipe < ApplicationRecord
                                       any_word: true } },
                   associated_against: { ingredients: [:name] },
                   ignoring: :accents
-
-  def self.text_search(query)
-    if query.present?
-      # search(query)
-      rank = <<-RANK
-        ts_rank(to_tsvector(name), plainto_tsquery(#{sanitize(query)})) +
-        ts_rank(to_tsvector(content), plainto_tsquery(#{sanitize(query)}))
-      RANK
-      where("to_tsvector('russian', name) @@ :q or to_tsvector('russian', content) @@ :q", q: query).order("#{rank}Desc")
-    else
-      scoped
-    end
-  end
 
   def ingredient_numbers
     recipe_ingredients.each_with_object({}) do |ri, obj|
