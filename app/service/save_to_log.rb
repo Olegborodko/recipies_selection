@@ -1,6 +1,5 @@
-class EmailLogger
-  #attr_reader :file, :txt, :error
-
+class SaveToLog
+  # EmailLogger
   def initialize(file, txt, error)
     @file = file
     @txt = txt
@@ -8,9 +7,7 @@ class EmailLogger
   end
 
   def save
-    f = "#{Rails.root}/log/#{@file}"
-    File.new(f, "a+")
-    logger = Logger.new f
+    logger = Logger.new "#{Rails.root}/log/#{@file}"
 
     if @error
       logger.error @txt
@@ -18,4 +15,5 @@ class EmailLogger
       logger.debug @txt
     end
   end
+
 end

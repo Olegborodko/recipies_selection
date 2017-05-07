@@ -1,14 +1,9 @@
-delete_not_authorized_users:
+delete_deprecated_users:
   cron: "1 4 * * 1"
-  class: "CronUserDeleteJob"
+  class: "DeleteDeprecatedUsersJob"
   queue: default
 
 parser:
   cron: "0 0 * * 3 *"
   class: "ParsingJob"
   queue: default
-
-#parser:
-#  cron: "1 4 1 * *"
-#  class: "ParserJob"
-#  queue: default

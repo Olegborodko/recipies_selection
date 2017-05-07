@@ -67,7 +67,7 @@ describe "UsersPart" do
   end
 
   it "User verification time (error)" do
-    @user.created_at -= User.time_for_authentification
+    @user.created_at -= @user.time_for_authentification
     @user.save
     get "/api/users/verification/#{@token}"
     expect(response.status).to eq 406

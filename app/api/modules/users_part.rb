@@ -54,7 +54,7 @@ module Modules
         user = get_user_from_token(params[:user_token])
         if user
           if user.unauthorized?
-            if user.created_at + User.time_for_authentification > Time.now
+            if user.have_correct_time?
               user.update_attribute(:status, 'subscriber')
               return { messages: 'success' }
             else

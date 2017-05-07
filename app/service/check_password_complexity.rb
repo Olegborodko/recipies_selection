@@ -8,26 +8,26 @@ class CheckPasswordComplexity
   end
 
   def valid?
-    score = has_uppercase_letters? + has_digits? + has_extra_chars? + has_downcase_letters?
+    score = uppercase_letters_score + digits_score + extra_chars_score + downcase_letters_score
 
     score >= required_complexity
   end
 
   private
 
-  def has_uppercase_letters?
+  def uppercase_letters_score
     password.match(/[A-Z]/) ? 1 : 0
   end
 
-  def has_digits?
+  def digits_score
     password.match(/\d/) ? 1 : 0
   end
 
-  def has_extra_chars?
+  def extra_chars_score
     password.match(/\W/) ? 1 : 0
   end
 
-  def has_downcase_letters?
+  def downcase_letters_score
     password.match(/[a-z]{1}/) ? 1 : 0
   end
 end

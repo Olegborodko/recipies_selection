@@ -35,7 +35,7 @@ class UsersController < ApplicationController
       if user
         time_now = Time.now
 
-        if user.created_at + User.time_for_authentification > time_now
+        if user.have_correct_time?
           user.status = "subscriber"
           user.save(validate: false)
           format.html { redirect_to root_url, notice: "Thank you now you are authorized" and return }

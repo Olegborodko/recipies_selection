@@ -30,8 +30,12 @@ class User < ApplicationRecord
     end
   end
 
-  def self.time_for_authentification
+  def time_for_authentification
     86400 #60 * 60 * 24  = 1day
+  end
+
+  def have_correct_time?
+    self.created_at + self.time_for_authentification > Time.now
   end
 
 end
