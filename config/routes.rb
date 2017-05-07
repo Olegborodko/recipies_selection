@@ -4,24 +4,24 @@ Rails.application.routes.draw do
   require 'sidekiq/cron/web'
   mount Sidekiq::Web => '/sidekiq', constraints: ApplicationController.new
 
-  get 'index' => 'users#index', :defaults => { :format => 'json' }
+  get 'index', to: 'users#index', defaults: { format: 'json' }
 
   scope "(:locale)", locale: /en|ru/ do
     resources :users, except: [:show]
-    get 'signup' => 'users#new'
-    get 'verification/:id' => 'users#verification', as: :verification
-    put 'update_description' => 'users#update_description', as: :update_description
-    get 'restore_password' => 'users#restore_password', as: :restore_password
-    post 'restore' => 'users#restore'
-    get 'switch/:locale' => 'users#switch', as: :switch
+    get 'signup', to: 'users#new'
+    get 'verification/:id', to: 'users#verification', as: :verification
+    put 'update_description', to: 'users#update_description', as: :update_description
+    get 'restore_password', to: 'users#restore_password', as: :restore_password
+    post 'restore', to: 'users#restore'
+    get 'switch/:locale', to: 'users#switch', as: :switch
   end
 
   scope "(:locale)", locale: /en|ru/ do
     namespace :users do
       resources :sessions, only: [:create]
-      get 'sessions' => 'sessions#new'
-      get 'login' => 'sessions#new', as: :login
-      delete 'logout/:id' => 'sessions#destroy', as: :logout
+      get 'sessions', to: 'sessions#new'
+      get 'login', to: 'sessions#new', as: :login
+      delete 'logout/:id', to: 'sessions#destroy', as: :logout
     end
   end
 
@@ -37,7 +37,7 @@ Rails.application.routes.draw do
   #get '/:locale' => 'users#index'
   scope "(:locale)", locale: /en|ru/ do
     root 'users#index'
-    get 'parser' => 'parser#index', constraints: ApplicationController.new
+    get 'parser', to: 'parser#index', constraints: ApplicationController.new
   end
 
 end

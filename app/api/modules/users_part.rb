@@ -13,6 +13,7 @@ module Modules
     end
 
     resource :users do
+
       # POST api/users
       desc 'Create a new user', {
         is_array: true,
@@ -44,7 +45,7 @@ module Modules
         is_array: false,
         success: { massage: 'authorized' },
         failure: [{ code: 401, message: 'Invalid key' },
-                 { code: 406, message: 'Error time authentification' }]
+                  { code: 406, message: 'Error time authentification' }]
       }
       params do
         requires :user_token, desc: 'users token'
@@ -103,7 +104,7 @@ module Modules
             @current_user.name = params[:name]
             @current_user.slug = nil
             @current_user.send :set_slug
-            @current_user.save!(validate: false)
+            @current_user.save(validate: false)
           end
           @current_user.update_attribute(:description, params[:description]) if params[:description]
           status 200
@@ -120,9 +121,6 @@ module Modules
         success: Entities::UserBase,
         failure: [{ code: 406, message: 'Invalid users token' }]
       }
-      params do
-        #requires :user_token, type: String, desc: 'users token'
-      end
       get do
         if user_is_allowed @current_user
           present @current_user, with: Entities::UserBase
