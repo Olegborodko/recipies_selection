@@ -8,7 +8,7 @@ parser:
   class: "ParsingJob"
   queue: default
 
-#parser:
-#  cron: "1 4 1 * *"
-#  class: "ParserJob"
-#  queue: default
+parser:
+  cron: "1 4 1 * *"
+  class: "ParserJob"
+  queue: default
