@@ -40,28 +40,18 @@ gem 'bcrypt', require: 'bcrypt'
 gem 'validates_email_format_of'
 gem 'jwt'
 gem 'figaro'
-
 gem 'sidekiq'
 gem 'sidekiq-cron'
 gem 'sinatra', github: 'sinatra/sinatra'
-
 gem 'friendly_id'
-
 gem 'grape'
 gem 'grape-entity'
 gem 'grape-swagger'
 gem 'grape-swagger-rails'
-# gem 'grape-swagger', '~> 0.26.1'
-# gem 'grape-swagger-rails', '~> 0.3.0'
-
 gem 'hashie-forbidden_attributes'
-
 gem 'grape-swagger-entity'
-
 gem 'mandrill-api'
-
 gem 'rack-cors', require: 'rack/cors'
-
 gem 'rubocop', require: false
 
 group :development, :test do
