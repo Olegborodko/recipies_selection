@@ -3,12 +3,7 @@ delete_not_authorized_users:
   class: "CronUserDeleteJob"
   queue: default
 
-parsing:
-  cron: "0 0 * * 3 *"
-  class: "ParsingJob"
-  queue: default
-
 parser:
-  cron: "1 4 1 * *"
+  cron: "0 0 * * 3 *"
   class: "ParserJob"
   queue: default

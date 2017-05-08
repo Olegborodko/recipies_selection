@@ -130,13 +130,13 @@ class ParserService
 
   def create_other_ingredient(check_category, iu, link, name)
     check_category.ingredients.find_or_create_by(
-        name: name,
-        href: link,
-        content: @ingredient_url.css('#stages > p').text.strip,
-        calories: iu[0].text.strip,
-        protein: iu[1].text.strip,
-        fat: iu[2].text.strip,
-        carbohydrate: iu[3].text.strip
+      name: name,
+      href: link,
+      content: @ingredient_url.css('#stages > p').text.strip,
+      calories: iu[0].text.strip,
+      protein: iu[1].text.strip,
+      fat: iu[2].text.strip,
+      carbohydrate: iu[3].text.strip
     )
   end
 
