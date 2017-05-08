@@ -31,7 +31,7 @@ class User < ApplicationRecord
   end
 
   def time_for_authentification
-    86400 #60 * 60 * 24  = 1day
+    1.day.to_i
   end
 
   def have_correct_time?

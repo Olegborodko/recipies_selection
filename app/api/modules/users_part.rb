@@ -146,11 +146,13 @@ module Modules
           p_new = password_generate
           user.update_attribute(:password, p_new)
           EmailSendJob.perform_later(user.email, p_new)
-          return { message: 'success', password: p_new }
+          { message: 'success', password: p_new }
+        else
+          status 406
+          { error: 'Invalid name or email' }
         end
-        status 406
-        { error: 'Invalid name or email' }
       end
+
     end
   end
 end

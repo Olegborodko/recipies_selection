@@ -10,4 +10,4 @@ FavoriteRecipe.delete_all
 User.delete_all
 User.create(email: "test@test.ua", status:"unauthorized", description: "some some ..", password: "Qaz123", name: 'david')
 User.create(email: "test1@test.ua", status:"subscriber", description: "some some ..", password: "Qaz123", name: 'david2')
-User.create(email: "test_admin@test.ua", status:"admin", description: "some some ..", password: "Qaz123", name: 'adm')
+User.create(email: "admin@test.ua", status:"admin", description: "some some ..", password: "admin@test.ua", name: 'admin@test.ua')

@@ -28,10 +28,11 @@ module Modules
       post :mandrill do
         if user_admin? @current_user
           MandrillJob.perform_later(params[:template_name], params[:template_content])
-          return { message: 'letters sent' }
+          { message: 'letters sent' }
+        else
+          status 406
+          { error: 'not authorized' }
         end
-        status 406
-        { error: 'not authorized' }
       end
 
       # POST /api/admin/parser

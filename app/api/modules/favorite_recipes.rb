@@ -29,16 +29,17 @@ module Modules
         recipe = Recipe.find_by id: params[:recipe_id]
 
         if user_is_allowed(@current_user) && recipe
-          fr = FavoriteRecipe.find_by user: @current_user, recipe: recipe
-          if fr
+          f_recipe_exist = FavoriteRecipe.find_by user: @current_user, recipe: recipe
+          if f_recipe_exist
             status 400
             return { message: 'This recipe already exists' }
           end
           f = FavoriteRecipe.new(user: @current_user, recipe: recipe, note: params[:notes])
           return { message: 'success' } if f.save
+        else
+          status 406
+          { error: 'Invalid users token or recipe id' }
         end
-        status 406
-        { error: 'Invalid users token or recipe id' }
       end
 
       # GET /api/favorite_recipes
@@ -68,8 +69,8 @@ module Modules
       end
       delete do
         if user_is_allowed @current_user
-          fr = FavoriteRecipe.find_by user: @current_user, id: params[:favorite_recipe_id]
-          if fr
+          f_recipe_exist = FavoriteRecipe.find_by user: @current_user, id: params[:favorite_recipe_id]
+          if f_recipe_exist
             FavoriteRecipe.destroy(params[:favorite_recipe_id])
             return { message: 'success' }
           end

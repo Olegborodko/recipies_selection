@@ -1,18 +1,18 @@
 class SaveToLog
   # EmailLogger
-  def initialize(file, txt, error)
+  def initialize(file, txt, success)
     @file = file
     @txt = txt
-    @error = error
+    @success = success
   end
 
   def save
     logger = Logger.new "#{Rails.root}/log/#{@file}"
 
-    if @error
-      logger.error @txt
-    else
+    if @success
       logger.debug @txt
+    else
+      logger.error @txt
     end
   end
 
