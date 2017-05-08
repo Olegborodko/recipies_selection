@@ -1,5 +1,4 @@
 module Modules
-
   class UsersPart < Grape::API
     prefix 'api'
     format :json
@@ -15,11 +14,11 @@ module Modules
 
     resource :users do
 
-      ###POST api/users
+      # POST api/users
       desc 'Create a new user', {
-      is_array: true,
-      success: { code: 201, model: Entities::UserCreate },
-      failure: [{ code: 406, message: 'Parameters contain errors' }]
+        is_array: true,
+        success: { code: 201, model: Entities::UserCreate },
+        failure: [{ code: 406, message: 'Parameters contain errors' }]
       }
       params do
         requires :email, allow_blank: false, regexp: /.+@.+/, desc: 'users email'
@@ -33,32 +32,33 @@ module Modules
         if user.save
           path = token_encode(user.rid)
           EmailUserCreateJob.perform_later(user.email, path)
-          present user, with: Entities::UserCreate, message: 'Please use token in 24 hours, else user will delete', token: token_encode(user.rid)
+          present user, with: Entities::UserCreate, message:
+          'Please use token in 24 hours, else user will delete', token: token_encode(user.rid)
         else
           status 406
           { errors: user.errors }
         end
       end
 
-      ###GET /api/users/verification
+      # GET /api/users/verification
       desc 'User verification', {
-      is_array: false,
-      success: { massage: 'authorized' },
-      failure: [{ code: 401, message: 'Invalid key' },
-                { code: 406, message: 'Error time authentification' }]
+        is_array: false,
+        success: { massage: 'authorized' },
+        failure: [{ code: 401, message: 'Invalid key' },
+                  { code: 406, message: 'Error time authentification' }]
       }
       params do
-        #requires :user_token, desc: 'users token'
+        requires :user_token, desc: 'users token'
       end
-      get 'verification' do
-        if @current_user
-          if @current_user.unauthorized?
-            if @current_user.created_at + User.time_for_authentification > Time.now
-              @current_user.status = "subscriber"
-              @current_user.save(validate: false)
-              return { messages: 'authorized' }
+      get 'verification/:user_token' do
+        user = get_user_from_token(params[:user_token])
+        if user
+          if user.unauthorized?
+            if user.created_at + User.time_for_authentification > Time.now
+              user.update_attribute(:status, 'subscriber')
+              return { messages: 'success' }
             else
-              @current_user.destroy
+              user.destroy
               status 406
               return { error: 'error time authentification' }
             end
@@ -68,18 +68,18 @@ module Modules
         { error: 'Invalid key' }
       end
 
-      ##POST /api/users/login
+      # POST /api/users/login
       desc 'User login', {
-      is_array: true,
-      success: { massage: 'login success' },
-      failure: [{ code: 406, message: 'Not correct password or email' }]
+        is_array: true,
+        success: { massage: 'login success' },
+        failure: [{ code: 406, message: 'Not correct password or email' }]
       }
       params do
         requires :email, allow_blank: false, regexp: /.+@.+/, desc: 'users email'
         requires :password, type: String, desc: 'users password'
       end
       post :login do
-        user = api_helper_authentication(params[:email],params[:password])
+        user = api_helper_authentication(params[:email], params[:password])
         if user
           { token: token_encode(user.rid), message: 'login success' }
         else
@@ -88,34 +88,39 @@ module Modules
         end
       end
 
-      ##PATCH /api/users
+      # PATCH /api/users
       desc 'User update', {
-      is_array: true,
-      success: Entities::UserBase,
-      failure: [{ code: 406, message: 'Invalid parameter entry' }]
+        is_array: true,
+        success: Entities::UserBase,
+        failure: [{ code: 406, message: 'Invalid parameter entry' }]
       }
       params do
-        requires :description, type: String, desc: 'users description'
+        optional :name, type: String, desc: 'users name'
+        optional :description, type: String, desc: 'users description'
       end
       patch do
         if user_is_allowed @current_user
-          @current_user.update_attribute(:description, params[:description])
+          if params[:name]
+            @current_user.name = params[:name]
+            @current_user.slug = nil
+            @current_user.send :set_slug
+            @current_user.save(validate: false)
+          end
+          @current_user.update_attribute(:description, params[:description]) if params[:description]
+          status 200
           present @current_user, with: Entities::UserBase
         else
           status 406
-          { error: 'Invalid users token or access' }
+          { error: 'Invalid users token' }
         end
       end
 
-      ###GET /api/user
+      # GET /api/user
       desc 'User information', {
-      is_array: true,
-      success: Entities::UserBase,
-      failure: [{ code: 406, message: 'Invalid users token' }]
+        is_array: true,
+        success: Entities::UserBase,
+        failure: [{ code: 406, message: 'Invalid users token' }]
       }
-      params do
-        #requires :user_token, type: String, desc: 'users token'
-      end
       get do
         if user_is_allowed @current_user
           present @current_user, with: Entities::UserBase
@@ -125,11 +130,11 @@ module Modules
         end
       end
 
-      ###POST /api/users/restore_password
+      # POST /api/users/restore_password
       desc 'Set new password', {
-      is_array: true,
-      success: { message: 'success' },
-      failure: [{ code: 406, message: 'Invalid users token, name or email' }]
+        is_array: true,
+        success: { message: 'success' },
+        failure: [{ code: 406, message: 'Invalid users token, name or email' }]
       }
       params do
         requires :name, type: String, desc: 'users name'
@@ -146,7 +151,6 @@ module Modules
         status 406
         { error: 'Invalid name or email' }
       end
-
     end
   end
 end

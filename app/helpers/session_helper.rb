@@ -21,7 +21,7 @@ module SessionHelper
   end
 
   def token_encode(user_rid)
-    payload = {:key =>  user_rid}
+    payload = { key: user_rid }
     token = JWT.encode payload, ENV["token_secret_key"], 'HS256'
     Base64.strict_encode64(token)
   end
@@ -29,7 +29,7 @@ module SessionHelper
   def get_user_from_token(token)
     begin
       tok = Base64.strict_decode64(token)
-      decoded_token = JWT.decode tok, ENV["token_secret_key"], true, { :algorithm => 'HS256' }
+      decoded_token = JWT.decode tok, ENV["token_secret_key"], true, { algorithm: 'HS256' }
     rescue
       return nil
     else

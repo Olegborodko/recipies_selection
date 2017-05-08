@@ -36,7 +36,7 @@ gem 'jbuilder'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 gem 'bootstrap-generators'
-gem 'bcrypt', :require => 'bcrypt'
+gem 'bcrypt', require: 'bcrypt'
 gem 'validates_email_format_of'
 gem 'jwt'
 gem 'figaro'
@@ -60,7 +60,9 @@ gem 'grape-swagger-entity'
 
 gem 'mandrill-api'
 
-gem 'rack-cors', :require => 'rack/cors'
+gem 'rack-cors', require: 'rack/cors'
+
+gem 'rubocop', require: false
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -70,7 +72,7 @@ end
 group :test do
   gem 'rspec-rails'
   gem 'email_spec'
-  gem 'simplecov', :require => false
+  gem 'simplecov', require: false
   gem 'database_cleaner'
   gem 'faker'
   gem 'factory_girl_rails'

@@ -81,4 +81,20 @@ describe "Admin" do
     expect(response.status).to eq 406
   end
 
+  it "Delete user" do
+    user = create(:user, status:'subscriber')
+    delete '/api/admin/user', params: { api_key: @token, users_email: user.email }
+    expect(response.status).to eq 200
+  end
+
+  it "Delete user (error not authorized)" do
+    delete '/api/admin/user', params: { api_key: 'fake', users_email: "#{Faker::Internet.unique.email}" }
+    expect(response.status).to eq 401
+  end
+
+  it "Delete user (error email)" do
+    delete '/api/admin/user', params: { api_key: @token, users_email: @user.email }
+    expect(response.status).to eq 406
+  end
+
 end

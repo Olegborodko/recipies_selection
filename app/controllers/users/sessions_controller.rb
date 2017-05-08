@@ -19,7 +19,7 @@ class Users::SessionsController < ApplicationController
   def create
     respond_to do |format|
       if authentication(person_params[:email], person_params[:password])
-        format.html { redirect_to root_url, :notice => "You are logged in" }
+        format.html { redirect_to root_url, notice: "You are logged in" }
         format.json { render json: {message: "logged in"}, status: :ok }
       else
         flash.now[:error] = "Not correct password or email"

@@ -14,12 +14,12 @@ module Modules
 
     resource :favorite_recipes do
 
-      ###POST /api/favorite_recipes
+      # POST /api/favorite_recipes
       desc 'Add favorite recipe', {
-      is_array: true,
-      success: { message: 'success' },
-      failure: [{ code: 406, message: 'Invalid users token or recipe id' },
-                { code: 400, message: 'This recipe already exists' }]
+        is_array: true,
+        success: { message: 'success' },
+        failure: [{ code: 406, message: 'Invalid users token or recipe id' },
+                  { code: 400, message: 'This recipe already exists' }]
       }
       params do
         requires :recipe_id, type: String, desc: 'id recipe'
@@ -34,26 +34,19 @@ module Modules
             status 400
             return { message: 'This recipe already exists' }
           end
-
-          f = FavoriteRecipe.new
-          f.user = @current_user
-          f.recipe = recipe
-          f.note = params[:notes]
+          f = FavoriteRecipe.new(user: @current_user, recipe: recipe, note: params[:notes])
           return { message: 'success' } if f.save
         end
         status 406
         { error: 'Invalid users token or recipe id' }
       end
 
-      ###GET /api/favorite_recipes
+      # GET /api/favorite_recipes
       desc 'Get favorite recipes', {
-      is_array: true,
-      success: { message: 'success' },
-      failure: [{ code: 406, message: 'Invalid users token' }]
+        is_array: true,
+        success: { message: 'success' },
+        failure: [{ code: 406, message: 'Invalid users token' }]
       }
-      params do
-        #requires :user_token, type: String, desc: 'users token'
-      end
       get do
         if user_is_allowed @current_user
           m = FavoriteRecipe.where(user: @current_user)
@@ -64,11 +57,11 @@ module Modules
         end
       end
 
-      ###DELETE /api/favorite_recipes/id
+      # DELETE /api/favorite_recipes/id
       desc 'Delete favorite recipe', {
-      is_array: true,
-      success: { message: 'success' },
-      failure: [{ code: 406, message: 'Invalid users token or recipe id' }]
+        is_array: true,
+        success: { message: 'success' },
+        failure: [{ code: 406, message: 'Invalid users token or recipe id' }]
       }
       params do
         requires :favorite_recipe_id, type: Integer, desc: 'favorite recipe id'

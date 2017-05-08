@@ -15,11 +15,11 @@ module Modules
 
     resource :admin do
 
-      ###POST /api/admin/mandrill
+      # POST /api/admin/mandrill
       desc 'Mandrill newsletter', {
-      is_array: true,
-      success: { message: 'letters sent, or template name have error please see (log/mandrill.log)' },
-      failure: [{ code: 406, message: 'not authorized' }]
+        is_array: true,
+        success: { message: 'letters sent, or template name have error please see (log/mandrill.log)' },
+        failure: [{ code: 406, message: 'not authorized' }]
       }
       params do
         requires :template_name, type: String, desc: 'template name (example - eat_template)'
@@ -34,47 +34,43 @@ module Modules
         { error: 'not authorized' }
       end
 
-      ###POST /api/admin/parser
+      # POST /api/admin/parser
       desc 'To parse the data', {
-      is_array: true,
-      success: { message: 'see the file (log/parser.log)' },
-      failure: [{ code: 406, message: 'not authorized' }]
+        is_array: true,
+        success: { message: 'see the file (log/parser.log)' },
+        failure: [{ code: 406, message: 'not authorized' }]
       }
-      params do
-        #requires :admin_token, type: String, desc: 'admins token'
-      end
       post :parser do
         if user_admin? @current_user
           ParserJob.perform_later
-          return { message: 'parser starts' }
+          { message: 'parser starts' }
+        else
+          status 406
+          { error: 'not authorized' }
         end
-        status 406
-        { error: 'not authorized' }
       end
 
-      ###GET /api/admin/user_all/
+      # GET /api/admin/user_all/
       desc 'All users', {
-      is_array: true,
-      success: { message: 'success' },
-      failure: [{ code: 406, message: 'not authorized' }]
+        is_array: true,
+        success: { message: 'success' },
+        failure: [{ code: 406, message: 'not authorized' }]
       }
-      params do
-        #requires :admin_token, type: String, desc: 'admins token'
-      end
       get 'user_all' do
         if user_admin? @current_user
-          return present User.all, with: Entities::UserBase
+          present User.all, with: Entities::UserBase
+        else
+          status 406
+          { error: 'not authorized' }
         end
-        status 406
-        { error: 'not authorized' }
       end
 
-      ###POST /api/admin/ban_user/
+      # POST /api/admin/ban_user/
       desc 'Ban/unban user', {
-      is_array: true,
-      success: { message: 'success' },
-      failure: [{ code: 401, message: 'not authorized' },
-                { code: 406, message: 'the user is not suitable for ban'  }]
+        is_array: true,
+        success: { message: 'success' },
+        failure: [{ code: 401, message: 'not authorized' },
+                  { code: 406, message: 'the user is not suitable for ban'  }]
       }
       params do
         requires :users_email, type: String, desc: 'user\'s email'
@@ -96,6 +92,32 @@ module Modules
         end
         status 401
         { error: 'not authorized' }
+      end
+
+      # DELETE /api/admin/{:user_email}
+      desc 'Delete user', {
+        is_array: true,
+        success: { message: 'success' },
+        failure: [{ code: 401, message: 'not authorized' },
+                  { code: 406, message: 'invalid users email' }]
+      }
+      params do
+        requires :users_email, type: String, desc: 'user\'s email'
+      end
+      delete 'user' do
+        if user_admin? @current_user
+          user = User.find_by email: params[:users_email]
+          if user
+            unless user.admin?
+              user.destroy
+              return { message: 'success' }
+            end
+          end
+          status 406
+          return { error: 'invalid users email' }
+        end
+      status 401
+      { error: 'not authorized' }
       end
 
     end
