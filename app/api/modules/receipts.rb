@@ -8,12 +8,7 @@ module Modules
       include UserHelpers
     end
 
-    before do
-      @current_user = get_user_from_token(users_token)
-    end
-
     desc 'Receipt controller'
-
     namespace :search do
       desc 'Search'
       params do
@@ -75,7 +70,7 @@ module Modules
                  desc: 'Array of number of each ingredient'
       end
       post do
-        { error: 'not authorized' } unless user_admin? @current_user
+        # { error: 'not authorized' } unless user_admin? @current_user
         ingredient = Ingredient.find(params[:ingredient_id])
         receipt = set_rec_category.recipes.build(
           recipe_category_id: params[:recipe_category_id],
@@ -125,7 +120,7 @@ module Modules
                  desc: 'Array of number of each ingredient'
       end
       put ':id' do
-        { error: 'not authorized' } unless user_admin? @current_user
+        # { error: 'not authorized' } unless user_admin? @current_user
         receipt = set_rec_category.recipes.find(params[:id])
         if receipt.update(
           recipe_category_id: params[:recipe_category_id],
@@ -153,7 +148,7 @@ module Modules
 
       desc 'Delete receipt'
       delete ':id' do
-        { error: 'not authorized' } unless user_admin? @current_user
+        # { error: 'not authorized' } unless user_admin? @current_user
         receipt = Recipe.find(params[:id])
         { status: :success } if receipt.recipe_ingredients.destroy_all && receipt.delete
       end

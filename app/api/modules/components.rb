@@ -12,10 +12,6 @@ module Modules
       include UserHelpers
     end
 
-    before do
-      @current_user = get_user_from_token(users_token)
-    end
-
     desc 'Ingredients controller'
     resource :ingredients do
 
@@ -50,7 +46,7 @@ module Modules
         requires :carbohydrate, type: Integer
       end
       post do
-        { error: 'not authorized' } unless user_admin? @current_user
+        # { error: 'not authorized' } unless user_admin? @current_user
         component = set_ing_category.ingredients.build(declared(params, include_missing: false).to_hash)
         if component.save
           present component, with: Api::Entities::Component
@@ -72,7 +68,7 @@ module Modules
         optional :carbohydrate, type: Integer
       end
       put ':id' do
-        { error: 'not authorized' } unless user_admin? @current_user
+        # { error: 'not authorized' } unless user_admin? @current_user
         component = set_ing_category.ingredients.find(params[:id])
         if component.update(declared(params, include_missing: false).to_hash)
           { status: :success }
@@ -86,7 +82,7 @@ module Modules
         requires :id, type: Integer, desc: 'Ingredient id'
       end
       delete ':id' do
-        { error: 'not authorized' } unless user_admin? @current_user
+        # { error: 'not authorized' } unless user_admin? @current_user
         component = Ingredient.find(params[:id])
         { status: :success } if component.delete
       end
