@@ -16,10 +16,6 @@ RSpec.describe Ingredient, type: :model do
       expect(build(:ingredient, name: nil)).to_not be_valid
     end
 
-    it 'is not valid without a content' do
-      expect(build(:ingredient, content: nil)).to_not be_valid
-    end
-
     it 'is not valid without a protein' do
       expect(build(:ingredient, protein: nil)).to_not be_valid
     end
@@ -39,10 +35,6 @@ RSpec.describe Ingredient, type: :model do
 
     it 'is not valid with a too shot name' do
       expect(build(:ingredient, name: 'a')).to_not be_valid
-    end
-
-    it 'is not valid with a too shot content' do
-      expect(build(:ingredient, content: 'a')).to_not be_valid
     end
 
     it 'is invalid with a duplicated name' do

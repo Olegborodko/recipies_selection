@@ -16,21 +16,12 @@ module UserHelpers
   end
 
   def user_admin?(user)
-    false
-    if user
-      if user.admin?
-        true
-      end
-    end
+    user.admin? if user
   end
 
   def user_is_allowed(user)
     if user
-      return false if user.unauthorized?
-      return false if user.ban?
-      true
-    else
-      false
+      true unless user.unauthorized? || user.ban?
     end
   end
 

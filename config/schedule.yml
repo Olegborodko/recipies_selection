@@ -5,5 +5,5 @@ delete_deprecated_users:
 
 parser:
   cron: "0 0 * * 3 *"
-  class: "ParsingJob"
+  class: "ParserJob"
   queue: default

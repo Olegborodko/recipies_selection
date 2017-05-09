@@ -8,10 +8,6 @@ module Modules
       include UserHelpers
     end
 
-    before do
-      @current_user = get_user_from_token(users_token)
-    end
-
     resource :categories_of_ingredients do
 
       desc 'All categories'
@@ -34,15 +30,18 @@ module Modules
         requires :title, type: String
       end
       post do
-        { error: 'not authorized' } unless user_admin? @current_user
-        category_of_ingredients = IngredientCategory.new(
+        # if user_admin? @current_user
+          category_of_ingredients = IngredientCategory.new(
             declared(params, include_missing: false).to_h)
-        if category_of_ingredients.save
-          {status: :success}
-        else
-          error!(status: :error, message: category_of_ingredients.errors.full_messages.first) if category_of_ingredients.errors.any?
-        end
-        present category_of_ingredients, with: Api::Entities::CategoryOfIngredients
+          if category_of_ingredients.save
+            { status: :success }
+          else
+            error!(status: :error, message: category_of_ingredients.errors.full_messages.first) if category_of_ingredients.errors.any?
+          end
+          present category_of_ingredients, with: Api::Entities::CategoryOfIngredients
+        # else
+        #   { error: 'not authorized' }
+        # end
       end
 
       desc 'Update category'
@@ -51,14 +50,17 @@ module Modules
         requires :title, type: String
       end
       put ':id' do
-        { error: 'not authorized' } unless user_admin? @current_user
-        category_of_ingredients = IngredientCategory.find(params[:id])
-        if category_of_ingredients.update(declared(params, include_missing: false).to_h)
-          present category_of_ingredients, with: Api::Entities::CategoryOfIngredients
-          {status: :success}
-        else
-          error!(status: :error, message: category_of_ingredients.errors.full_messages.first) if category_of_ingredients.errors.any?
-        end
+        # if user_admin? @current_user
+          category_of_ingredients = IngredientCategory.find(params[:id])
+          if category_of_ingredients.update(declared(params, include_missing: false).to_h)
+            present category_of_ingredients, with: Api::Entities::CategoryOfIngredients
+            { status: :success }
+          else
+            error!(status: :error, message: category_of_ingredients.errors.full_messages.first) if category_of_ingredients.errors.any?
+          end
+        # else
+        #   { error: 'not authorized' }
+        # end
       end
 
       desc 'Delete category'
@@ -66,8 +68,11 @@ module Modules
         requires :id, type: Integer
       end
       delete ':id' do
-        { error: 'not authorized' } unless user_admin? @current_user
-        {status: :success} if IngredientCategory.find(params[:id]).destroy
+        # if user_admin? @current_user
+          { status: :success } if IngredientCategory.find(params[:id]).destroy
+        # else
+        #   { error: 'not authorized' }
+        # end
       end
     end
   end
