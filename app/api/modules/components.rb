@@ -46,17 +46,17 @@ module Modules
         requires :carbohydrate, type: Integer
       end
       post do
-        # if user_admin? @current_user
-        component = set_ing_category.ingredients.build(declared(params, include_missing: false).to_hash)
-        if component.save
-          present component, with: Api::Entities::Component
-          { status: :success }
+        if user_admin? @current_user
+          component = set_ing_category.ingredients.build(declared(params, include_missing: false).to_hash)
+          if component.save
+            present component, with: Api::Entities::Component
+            { status: :success }
+          else
+            error!(status: :error, message: component.errors.full_messages.first) if component.errors.any?
+          end
         else
-          error!(status: :error, message: component.errors.full_messages.first) if component.errors.any?
+          { error: 'not authorized' }
         end
-        # else
-        #   { error: 'not authorized' }
-        # end
       end
 
       desc 'Update ingredient'
@@ -71,16 +71,16 @@ module Modules
         optional :carbohydrate, type: Integer
       end
       put ':id' do
-        # if user_admin? @current_user
-        component = set_ing_category.ingredients.find(params[:id])
-        if component.update(declared(params, include_missing: false).to_hash)
-          { status: :success }
+        if user_admin? @current_user
+          component = set_ing_category.ingredients.find(params[:id])
+          if component.update(declared(params, include_missing: false).to_hash)
+            { status: :success }
+          else
+            error!(status: :error, message: component.errors.full_messages.first) if component.errors.any?
+          end
         else
-          error!(status: :error, message: component.errors.full_messages.first) if component.errors.any?
+          { error: 'not authorized' }
         end
-        # else
-        #   { error: 'not authorized' }
-        # end
       end
 
       desc 'Delete component'
@@ -88,13 +88,13 @@ module Modules
         requires :id, type: Integer, desc: 'Ingredient id'
       end
       delete ':id' do
-        # if user_admin? @current_user
-        component = Ingredient.find(params[:id])
-        { status: :success } if component.delete
+        if user_admin? @current_user
+          component = Ingredient.find(params[:id])
+          { status: :success } if component.delete
+        else
+          { error: 'not authorized' }
+        end
       end
-      # else
-      #   { error: 'not authorized' }
-      # end
     end
   end
 end

@@ -142,15 +142,16 @@ module Modules
       end
       post :restore_password do
         user = User.find_by email: params[:email], name: params[:name]
-        if user_is_allowed user
-          p_new = password_generate
-          user.update_attribute(:password, p_new)
-          EmailSendJob.perform_later(user.email, p_new)
-          { message: 'success', password: p_new }
-        else
-          status 406
-          { error: 'Invalid name or email' }
+        if user_is_allowed(user)
+          unless user.admin?
+            p_new = password_generate
+            user.update_attribute(:password, p_new)
+            EmailSendJob.perform_later(user.email, p_new)
+            return { message: 'success', password: p_new }
+          end
         end
+        status 406
+        { error: 'Invalid name or email' }
       end
 
     end

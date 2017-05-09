@@ -70,7 +70,7 @@ module Modules
                  desc: 'Array of number of each ingredient'
       end
       post do
-        # if user_admin? @current_user
+        if user_admin? @current_user
           ingredient = Ingredient.find(params[:ingredient_id])
           receipt = set_rec_category.recipes.build(
             recipe_category_id: params[:recipe_category_id],
@@ -98,9 +98,9 @@ module Modules
           else
             error!(status: :error, message: receipt.errors.full_messages.first) if receipt.errors.any?
           end
-          # else
-          #   { error: 'not authorized' }
-          # end
+        else
+          { error: 'not authorized' }
+        end
       end
 
       desc 'Update receipt'
@@ -123,7 +123,7 @@ module Modules
                  desc: 'Array of number of each ingredient'
       end
       put ':id' do
-        # if user_admin? @current_user
+        if user_admin? @current_user
           receipt = set_rec_category.recipes.find(params[:id])
           if receipt.update(
             recipe_category_id: params[:recipe_category_id],
@@ -147,9 +147,9 @@ module Modules
           else
             error!(status: :error, message: receipt.errors.full_messages.first) if receipt.errors.any?
           end
-          # else
-          #   { error: 'not authorized' }
-          # end
+        else
+          { error: 'not authorized' }
+        end
       end
 
       desc 'Delete receipt'
@@ -157,12 +157,12 @@ module Modules
         requires :id, type: Integer, desc: 'Recipe id'
       end
       delete ':id' do
-        # if user_admin? @current_user
+        if user_admin? @current_user
           receipt = Recipe.find(params[:id])
           { status: :success } if receipt.recipe_ingredients.destroy_all && receipt.delete
-        # else
-        #   { error: 'not authorized' }
-        # end
+        else
+          { error: 'not authorized' }
+        end
       end
     end
   end
