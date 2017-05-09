@@ -70,34 +70,37 @@ module Modules
                  desc: 'Array of number of each ingredient'
       end
       post do
-        # { error: 'not authorized' } unless user_admin? @current_user
-        ingredient = Ingredient.find(params[:ingredient_id])
-        receipt = set_rec_category.recipes.build(
-          recipe_category_id: params[:recipe_category_id],
-          name: params[:name],
-          content: params[:content],
-          cooking_time: params[:cooking_time],
-          calories: params[:calories],
-          protein: params[:protein],
-          fat: params[:fat],
-          carbohydrate: params[:carbohydrate])
+        # if user_admin? @current_user
+          ingredient = Ingredient.find(params[:ingredient_id])
+          receipt = set_rec_category.recipes.build(
+            recipe_category_id: params[:recipe_category_id],
+            name: params[:name],
+            content: params[:content],
+            cooking_time: params[:cooking_time],
+            calories: params[:calories],
+            protein: params[:protein],
+            fat: params[:fat],
+            carbohydrate: params[:carbohydrate])
 
-        receipt.ingredients << ingredient
+          receipt.ingredients << ingredient
 
-        if receipt.save
-          ri_all = receipt.recipe_ingredients
-          x = 0
-          ri_all.each_with_object({}) do |ri, obj|
-            obj[ri.ingredient.name] = ri.number_of_ingredient
-            ri.number_of_ingredient = params[:number_of_ingredient][x]
-            x += 1
-            ri.save
+          if receipt.save
+            ri_all = receipt.recipe_ingredients
+            x = 0
+            ri_all.each_with_object({}) do |ri, obj|
+              obj[ri.ingredient.name] = ri.number_of_ingredient
+              ri.number_of_ingredient = params[:number_of_ingredient][x]
+              x += 1
+              ri.save
+            end
+            present receipt, with: Api::Entities::Receipt
+            { status: :success }
+          else
+            error!(status: :error, message: receipt.errors.full_messages.first) if receipt.errors.any?
           end
-          present receipt, with: Api::Entities::Receipt
-          { status: :success }
-        else
-          error!(status: :error, message: receipt.errors.full_messages.first) if receipt.errors.any?
-        end
+          # else
+          #   { error: 'not authorized' }
+          # end
       end
 
       desc 'Update receipt'
@@ -120,37 +123,46 @@ module Modules
                  desc: 'Array of number of each ingredient'
       end
       put ':id' do
-        # { error: 'not authorized' } unless user_admin? @current_user
-        receipt = set_rec_category.recipes.find(params[:id])
-        if receipt.update(
-          recipe_category_id: params[:recipe_category_id],
-          name: params[:name],
-          content: params[:content],
-          cooking_time: params[:cooking_time],
-          calories: params[:calories],
-          protein: params[:protein],
-          fat: params[:fat],
-          carbohydrate: params[:carbohydrate])
+        # if user_admin? @current_user
+          receipt = set_rec_category.recipes.find(params[:id])
+          if receipt.update(
+            recipe_category_id: params[:recipe_category_id],
+            name: params[:name],
+            content: params[:content],
+            cooking_time: params[:cooking_time],
+            calories: params[:calories],
+            protein: params[:protein],
+            fat: params[:fat],
+            carbohydrate: params[:carbohydrate])
 
-          ri_all = receipt.recipe_ingredients
-          x = params[:ingredient_id].size
-          ri_all.where(ingredient_id: params[:ingredient_id]).each_with_object({}) do |ri, obj|
-            x -= 1
-            ri.number_of_ingredient = params[:number_of_ingredient][x]
-            ri.save
+            ri_all = receipt.recipe_ingredients
+            x = params[:ingredient_id].size
+            ri_all.where(ingredient_id: params[:ingredient_id]).each_with_object({}) do |ri, obj|
+              x -= 1
+              ri.number_of_ingredient = params[:number_of_ingredient][x]
+              ri.save
+            end
+            present receipt, with: Api::Entities::Receipt
+            { status: :success }
+          else
+            error!(status: :error, message: receipt.errors.full_messages.first) if receipt.errors.any?
           end
-          present receipt, with: Api::Entities::Receipt
-          { status: :success }
-        else
-          error!(status: :error, message: receipt.errors.full_messages.first) if receipt.errors.any?
-        end
+          # else
+          #   { error: 'not authorized' }
+          # end
       end
 
       desc 'Delete receipt'
+      params do
+        requires :id, type: Integer, desc: 'Recipe id'
+      end
       delete ':id' do
-        # { error: 'not authorized' } unless user_admin? @current_user
-        receipt = Recipe.find(params[:id])
-        { status: :success } if receipt.recipe_ingredients.destroy_all && receipt.delete
+        # if user_admin? @current_user
+          receipt = Recipe.find(params[:id])
+          { status: :success } if receipt.recipe_ingredients.destroy_all && receipt.delete
+        # else
+        #   { error: 'not authorized' }
+        # end
       end
     end
   end
