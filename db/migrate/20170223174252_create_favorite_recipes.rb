@@ -1,4 +1,4 @@
-class CreateFavoriteRecipes < ActiveRecord::Migration[5.0]
+class CreateFavoriteRecipes < ActiveRecord::Migration[5.1]
   def change
     create_table :favorite_recipes do |t|
       t.belongs_to :user, index: true

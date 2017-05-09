@@ -1,4 +1,4 @@
-class CreateJoinTableRecipeIngredient < ActiveRecord::Migration[5.0]
+class CreateJoinTableRecipeIngredient < ActiveRecord::Migration[5.1]
   def change
     create_join_table :recipes, :ingredients do |t|
       t.index [:recipe_id, :ingredient_id]

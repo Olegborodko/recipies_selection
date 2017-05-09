@@ -18,7 +18,7 @@ describe "Favorite recipes" do
   before(:all) do
     @recipe = create(:recipe)
     @user = create(:user)
-    @token = token_encode(@user.rid)
+    @token = token_create(@user)
 
     @favorite_recipe = create(:favorite_recipe, user_id: @user.id)
   end

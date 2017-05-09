@@ -30,10 +30,10 @@ module Modules
       post do
         user = User.new(all_params_hash)
         if user.save
-          path = token_encode(user.rid)
-          EmailUserCreateJob.perform_later(user.email, path)
+          token = token_create(user)
+          EmailUserCreateJob.perform_later(user.email, token)
           present user, with: Entities::UserCreate, message:
-          'Please use token in 24 hours, else user will delete', token: token_encode(user.rid)
+          'Please use token in 24 hours, else user will delete', token: token
         else
           status 406
           { errors: user.errors }
@@ -81,7 +81,7 @@ module Modules
       post :login do
         user = api_helper_authentication(params[:email], params[:password])
         if user
-          { token: token_encode(user.rid), message: 'login success' }
+          { token: token_create(user), message: 'login success' }
         else
           status 406
           { error: 'Not correct password or email' }

@@ -16,7 +16,7 @@ describe "Admin" do
 
   before do
     @user = create(:user, status:'admin')
-    @token = token_encode(@user.rid)
+    @token = token_create(@user)
   end
 
   after do

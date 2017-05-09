@@ -19,7 +19,8 @@ describe "UsersPart" do
     @email_password_restore = UserMailer.password_new("jojo@yahoo.com", "qqq111")
 
     @user = create(:user, status:'unauthorized')
-    @token = token_encode(@user.rid)
+    @token = token_create(@user)
+
   end
 
   after do

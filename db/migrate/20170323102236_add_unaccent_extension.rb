@@ -1,4 +1,4 @@
-class AddUnaccentExtension < ActiveRecord::Migration[5.0]
+class AddUnaccentExtension < ActiveRecord::Migration[5.1]
   def up
     execute "create extension unaccent"
   end

@@ -1,4 +1,4 @@
-class AddDetails < ActiveRecord::Migration[5.0]
+class AddDetails < ActiveRecord::Migration[5.1]
   def change
     add_column :ingredients, :calories, :integer
     add_column :ingredients, :protein, :integer

@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   extend FriendlyId
+  extend AttrEncrypted
   friendly_id :name, use: :slugged
 
   enum status: [ :unauthorized, :subscriber, :admin, :ban ]
@@ -9,9 +10,11 @@ class User < ApplicationRecord
 
   has_secure_password
   has_secure_token :rid
+  attr_encrypted :token, key: ENV["token_secret_key"], encode: true
 
   before_create do
     self.email = email.downcase
+    self.token = token_generate
   end
 
   validates_email_format_of :email, message: 'is not looking good'
@@ -36,6 +39,10 @@ class User < ApplicationRecord
 
   def have_correct_time?
     self.created_at + self.time_for_authentification > Time.now
+  end
+
+  def token_generate
+    "#{rand(1..30000)}#{Time.now.to_i}"
   end
 
 end

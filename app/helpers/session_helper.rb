@@ -15,14 +15,18 @@ module SessionHelper
   end
 
   def key_have
-    if params[:key] == "key_for_another_sites"
-      true
-    end
+    params[:key] == "key_for_another_sites"
   end
 
-  def token_encode(user_rid)
-    payload = { key: user_rid }
+  def token_create(user)
+    user.update_attribute(:token, user.token_generate)
+    token_encode(user)
+  end
+
+  def token_encode(user)
+    payload = { key: user.rid, label: user.token }
     token = JWT.encode payload, ENV["token_secret_key"], 'HS256'
+
     Base64.strict_encode64(token)
   end
 
@@ -31,9 +35,14 @@ module SessionHelper
       tok = Base64.strict_decode64(token)
       decoded_token = JWT.decode tok, ENV["token_secret_key"], true, { algorithm: 'HS256' }
     rescue
-      return nil
+      nil
     else
-      User.find_by rid: decoded_token[0]['key']
+      user = User.find_by rid: decoded_token.first['key']
+      if user
+        user if user.token == decoded_token.first['label']
+      else
+        nil
+      end
     end
   end
 
