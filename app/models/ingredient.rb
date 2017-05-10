@@ -10,8 +10,7 @@ class Ingredient < ApplicationRecord
             on: [:create, :update],
             if: :sum?
   validates :content,
-            length: { maximum: 10_000 },
-            uniqueness: { case_sensitive: false }
+            length: { maximum: 10_000 }
 
   validates :protein, :carbohydrate, :fat, :calories, presence: true
 
