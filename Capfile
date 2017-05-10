@@ -40,6 +40,7 @@ require "capistrano/puma"
 require "capistrano/puma/nginx"
 require "capistrano/rails/console"
 require "capistrano/sidekiq"
+require "capistrano/postgresql"
 # require "capistrano/sidekiq/monit"
 
 install_plugin Capistrano::Puma

@@ -86,6 +86,7 @@ group :development do
   gem 'capistrano-sidekiq', github: 'seuros/capistrano-sidekiq'
   gem 'capistrano-rails-console', require: false
   gem 'rails-erd'
+  gem 'capistrano-postgresql'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
