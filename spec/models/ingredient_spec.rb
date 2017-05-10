@@ -41,10 +41,5 @@ RSpec.describe Ingredient, type: :model do
       create(:ingredient, name: 'qqq')
       expect(build(:ingredient, name: 'qqq')).to_not be_valid
     end
-
-    it 'is invalid with a duplicated content' do
-      create(:ingredient, content: c)
-      expect(build(:ingredient, content: c)).to_not be_valid
-    end
   end
 end
