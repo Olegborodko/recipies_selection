@@ -1,21 +1,21 @@
-<h1><%= t("registration") %></h1>
-<%= form_for User.new, url: {action: "create"}, html: {class: "user_form"} do |f| %>
+<h1><%= t('registration') %></h1>
+<%= form_for User.new, url: {action: 'create' }, html: { class: 'user_form' } do |f| %>
     <div class="form-group">
-      <%= f.text_field :name, class: "form-control", placeholder: t("form.name") %>
+      <%= f.text_field :name, class: 'form-control', placeholder: t('form.name') %>
     </div>
     <div class="form-group">
-      <%= f.email_field :email, class: "form-control", placeholder: t("form.email") %>
+      <%= f.email_field :email, class: 'form-control', placeholder: t('form.email') %>
     </div>
     <div class="form-group">
-      <%= f.password_field :password, class: "form-control", placeholder: t("form.password") %>
+      <%= f.password_field :password, class: 'form-control', placeholder: t('form.password') %>
     </div>
     <div class="form-group">
-      <%= f.password_field :password_confirmation, class: "form-control", placeholder: t("form.password_confirmation") %>
+      <%= f.password_field :password_confirmation, class: 'form-control', placeholder: t('form.password_confirmation') %>
     </div>
     <div class="form-group">
-      <%= f.text_area :description, class: "form-control", placeholder: t("form.description"), size: "60x12" %>
+      <%= f.text_area :description, class: 'form-control', placeholder: t('form.description'), size: '60x12' %>
     </div>
     <div class="form-group">
-      <%= f.submit t("form.create_user"), class: "btn, btn-default" %>
+      <%= f.submit t('form.create_user'), class: 'btn, btn-default' %>
     </div>
 <% end %>

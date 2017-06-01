@@ -15,7 +15,7 @@ module SessionHelper
   end
 
   def key_have
-    params[:key] == "key_for_another_sites"
+    params[:key] == 'key_for_another_sites'
   end
 
   def token_create(user)
@@ -25,7 +25,7 @@ module SessionHelper
 
   def token_encode(user)
     payload = { key: user.rid, label: user.token }
-    token = JWT.encode payload, ENV["token_secret_key"], 'HS256'
+    token = JWT.encode payload, ENV['token_secret_key'], 'HS256'
 
     Base64.strict_encode64(token)
   end
@@ -33,7 +33,7 @@ module SessionHelper
   def get_user_from_token(token)
     begin
       tok = Base64.strict_decode64(token)
-      decoded_token = JWT.decode tok, ENV["token_secret_key"], true, { algorithm: 'HS256' }
+      decoded_token = JWT.decode tok, ENV['token_secret_key'], true, { algorithm: 'HS256' }
     rescue
       nil
     else
@@ -47,8 +47,8 @@ module SessionHelper
   end
 
   def password_generate
-    password_func(("a".."z"),5) +
-    password_func(("A".."Z"),5) +
+    password_func(('a'..'z'), 5) +
+    password_func(('A'..'Z'), 5) +
     password_func((0..9),5)
   end
 

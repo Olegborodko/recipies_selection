@@ -10,7 +10,7 @@ class User < ApplicationRecord
 
   has_secure_password
   has_secure_token :rid
-  attr_encrypted :token, key: ENV["token_secret_key"], encode: true
+  attr_encrypted :token, key: ENV['token_secret_key'], encode: true
 
   before_create do
     self.email = email.downcase
@@ -29,7 +29,7 @@ class User < ApplicationRecord
     return if self.password.nil?
     required_complexity = 2 # we're actually storing this in the configuration of each customer
     unless CheckPasswordComplexity.new(password, required_complexity).valid?
-      errors.add :password, "Your password does not match the security requirements. Please use A-Z, a-z, 0-9"
+      errors.add :password, 'Your password does not match the security requirements. Please use A-Z, a-z, 0-9'
     end
   end
 

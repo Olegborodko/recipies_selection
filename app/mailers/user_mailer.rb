@@ -7,11 +7,11 @@ class UserMailer < ApplicationMailer
   #
   def create(user_to, path)
     @path = path
-    mail to: user_to, subject: "Registration confirmation"
+    mail to: user_to, subject: 'Registration confirmation'
   end
 
   def password_new(user_to, password)
     @password = password
-    mail to: user_to, subject: "Password Restore"
+    mail to: user_to, subject: 'Password Restore'
   end
 end

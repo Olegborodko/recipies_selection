@@ -3,7 +3,7 @@ class MandrillJob < ApplicationJob
 
   def perform(template_name, template_content)
     s = SenderMandrill.new(template_name, template_content).call
-    SaveToLog.new("mandrill.log", s[:body] , s[:success]).save
+    SaveToLog.new('mandrill.log', s[:body] , s[:success]).save
   end
 
 end

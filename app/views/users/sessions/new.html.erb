@@ -1,14 +1,14 @@
-<h1><%= t("sign_in") %></h1>
-<%= form_for :session, url: {action: "create"}, html: {class: "user_form"} do |f| %>
+<h1><%= t('sign_in') %></h1>
+<%= form_for :session, url: {action: 'create' }, html: { class: 'user_form' } do |f| %>
     <div class="form-group">
-      <%= f.email_field :email, class: "form-control", placeholder: t("form.email") %>
+      <%= f.email_field :email, class: 'form-control', placeholder: t('form.email') %>
     </div>
     <div class="form-group">
-      <%= f.password_field :password, class: "form-control", placeholder: t("form.password") %>
+      <%= f.password_field :password, class: 'form-control', placeholder: t('form.password') %>
     </div>
     <div class="form-group">
-      <%= f.submit t("sign_in"), class: "btn, btn-default" %>
+      <%= f.submit t('sign_in'), class: 'btn, btn-default' %>
     </div>
 <% end %>
 
-<div><a class="underline" href="<%= restore_password_path() %>"><%= t("restore_password") %></a></div>
+<div><a class="underline" href="<%= restore_password_path %>"><%= t('restore_password') %></a></div>

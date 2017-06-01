@@ -6,7 +6,7 @@ Rails.application.routes.draw do
 
   get 'index', to: 'users#index', defaults: { format: 'json' }
 
-  scope "(:locale)", locale: /en|ru/ do
+  scope '(:locale)', locale: /en|ru/ do
     resources :users, except: [:show]
     get 'signup', to: 'users#new'
     get 'verification/:id', to: 'users#verification', as: :verification
@@ -16,7 +16,7 @@ Rails.application.routes.draw do
     get 'switch/:locale', to: 'users#switch', as: :switch
   end
 
-  scope "(:locale)", locale: /en|ru/ do
+  scope '(:locale)', locale: /en|ru/ do
     namespace :users do
       resources :sessions, only: [:create]
       get 'sessions', to: 'sessions#new'
@@ -35,7 +35,7 @@ Rails.application.routes.draw do
   # end
 
   #get '/:locale' => 'users#index'
-  scope "(:locale)", locale: /en|ru/ do
+  scope '(:locale)', locale: /en|ru/ do
     root 'users#index'
     get 'parser', to: 'parser#index', constraints: ApplicationController.new
   end

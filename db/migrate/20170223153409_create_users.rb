@@ -6,7 +6,7 @@ class CreateUsers < ActiveRecord::Migration[5.1]
       t.string :name, null: false
       t.belongs_to :role, index: true, null: false
       t.text :description
-      t.string  "rid", null: false, unique: true, index: true
+      t.string 'rid', null: false, unique: true, index: true
       t.timestamps
     end
   end

@@ -4,8 +4,8 @@ class ParserService
   PAGE = 24
 
   def index
-    @main_page = Nokogiri::HTML(open("http://namnamra.com/"))
-    @ingredient_category_url = Nokogiri::HTML(open("http://namnamra.com/ingredients"))
+    @main_page = Nokogiri::HTML(open('http://namnamra.com/'))
+    @ingredient_category_url = Nokogiri::HTML(open('http://namnamra.com/ingredients'))
     ingredients(links_ci)
     ingredient_save
     recipes(links_cr)

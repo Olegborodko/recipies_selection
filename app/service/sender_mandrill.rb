@@ -29,16 +29,16 @@ class SenderMandrill
 
   def message
     {
-    subject: "Favorite recipes",
-    from_name: "user admin@#{ENV["domain"]}",
-    from_email: "admin@#{ENV["domain"]}",
+    subject: 'Favorite recipes',
+    from_name: "user admin@#{ENV['domain']}",
+    from_email: "admin@#{ENV['domain']}",
     to: User.all.as_json(only: [:name, :email]), #all users
     preserve_recipients: false
     }
   end
 
   def template_content
-    [{"name": "footer", "content": @template_body}]
+    [{ 'name': 'footer', 'content': @template_body}]
   end
 
 end

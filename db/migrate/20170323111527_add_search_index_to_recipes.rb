@@ -5,7 +5,7 @@ class AddSearchIndexToRecipes < ActiveRecord::Migration[5.1]
   end
 
   def down
-    execute "drop index recipes_name"
-    execute "drop index recipes_content"
+    execute 'drop index recipes_name'
+    execute 'drop index recipes_content'
   end
 end

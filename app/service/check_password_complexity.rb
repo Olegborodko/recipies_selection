@@ -28,6 +28,6 @@ class CheckPasswordComplexity
   end
 
   def downcase_letters_score
-    password.match(/[a-z]{1}/) ? 1 : 0
+    password.match(/[a-z]/) ? 1 : 0
   end
 end

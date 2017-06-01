@@ -1,7 +1,7 @@
 <%= form_for(ingredient_category) do |f| %>
     <% if ingredient_category.errors.any? %>
         <div id="error_explanation">
-          <h2><%= pluralize(ingredient_category.errors.count, "error") %> prohibited this ingredient_category from being
+          <h2><%= pluralize(ingredient_category.errors.count, 'error') %> prohibited this ingredient_category from being
             saved:</h2>
 
           <ul>

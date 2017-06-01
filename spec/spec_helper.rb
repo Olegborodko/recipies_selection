@@ -97,10 +97,8 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 =end
 
-  require "simplecov"
-   SimpleCov.start do
-     add_group 'Modules', 'api/modules'
-   end
+  require 'simplecov'
+   SimpleCov.start {add_group 'Modules', 'api/modules'}
   SimpleCov.coverage_dir 'public/coverage'
 
    # require 'sidekiq/testing'

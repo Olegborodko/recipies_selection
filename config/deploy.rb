@@ -1,17 +1,17 @@
 # config valid only for current version of Capistrano
-lock "3.8.1"
+lock '3.8.1'
 
-set :rvm_ruby_version, "2.3.3@project"
+set :rvm_ruby_version, '2.3.3@project'
 
-set :branch, "production"
-set :application, "project"
+set :branch, 'production'
+set :application, 'project'
 
-set :repo_url, "/root/git_project/"
+set :repo_url, '/root/git_project/'
 
 set :deploy_to, "/root/#{fetch(:application)}"
 
-append :linked_files, "config/database.yml", "config/secrets.yml"
-append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets"
+append :linked_files, 'config/database.yml', 'config/secrets.yml'
+append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets'
 
 # set :sidekiq_monit_conf_dir, "/root"
 

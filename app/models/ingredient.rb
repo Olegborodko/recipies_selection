@@ -4,7 +4,7 @@ class Ingredient < ApplicationRecord
   has_many :recipes, through: :recipe_ingredients
 
   validates :name,
-            presence: { message: "Name must be given please" },
+            presence: { message: 'Name must be given please' },
             uniqueness: { case_sensitive: false },
             length: { minimum: 2, maximum: 100 },
             on: [:create, :update],
